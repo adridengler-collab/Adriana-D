@@ -1,0 +1,477 @@
+/* ==========================================================================
+   RESPONSIVE & MOBILE ADAPTATIONS
+   Transporte Urbano e Internacional de Puerto Iguazú
+   ========================================================================== */
+
+/* Mobile Bottom Navigation Bar (Touch-friendly native app experience) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(9, 19, 27, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-dark);
+  z-index: 1500;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-bottom-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  transition: var(--transition);
+  padding: 4px 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item i {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.mobile-nav-item.active, .mobile-nav-item:hover {
+  color: var(--primary-light);
+}
+
+/* ==========================================================================
+   NOTEBOOK & SMALL DESKTOP (993px - 1200px)
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  .main-nav ul {
+    gap: 16px;
+  }
+
+  .main-nav a {
+    font-size: 0.88rem;
+  }
+
+  .planner-container-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .map-canvas-container {
+    height: 500px;
+  }
+}
+
+/* ==========================================================================
+   TABLET (769px - 992px)
+   ========================================================================== */
+@media (max-width: 992px) {
+  .main-nav {
+    display: none; /* Replaced by bottom nav */
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+  }
+
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-section {
+    padding: 48px 0 64px;
+  }
+
+  .hero-title {
+    font-size: 2.3rem;
+  }
+
+  .planner-container-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .map-canvas-container {
+    height: 460px;
+  }
+
+  .whatsapp-float-btn {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    right: 18px;
+    width: 52px;
+    height: 52px;
+    font-size: 28px;
+  }
+}
+
+/* ==========================================================================
+   MOBILE VERTICAL (320px - 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 62px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .section {
+    padding: 48px 0;
+  }
+
+  .section-header {
+    margin-bottom: 26px;
+  }
+
+  .section-title {
+    font-size: 1.55rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.92rem;
+  }
+
+  /* Header */
+  .brand-text h1 {
+    font-size: 1.1rem;
+  }
+
+  .brand-text span {
+    font-size: 0.7rem;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  /* Hero */
+  .hero-section {
+    padding: 36px 0 48px;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.92rem;
+    margin-bottom: 22px;
+  }
+
+  .hero-search-card {
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .search-input-group {
+    width: 100%;
+  }
+
+  .btn-hero-submit {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .hero-quick-tags {
+    margin-bottom: 18px;
+  }
+
+  /* Filter Bar */
+  .filter-bar-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-box-filter {
+    min-width: 100%;
+  }
+
+  .category-pills {
+    justify-content: flex-start;
+  }
+
+  .cat-pill {
+    padding: 7px 13px;
+    font-size: 0.82rem;
+  }
+
+  /* Lines Grid */
+  .lines-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .line-card {
+    padding: 18px;
+  }
+
+  .line-meta-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  /* Planner */
+  .planner-form-card {
+    padding: 20px 16px;
+  }
+
+  .planner-swap-row {
+    margin: -4px 0 6px;
+  }
+
+  .result-body {
+    padding: 18px 16px;
+  }
+
+  .result-stat-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+
+  .result-actions button {
+    width: 100%;
+  }
+
+  /* Map */
+  .map-canvas-container {
+    height: 400px;
+  }
+
+  .map-control-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .map-select-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .map-select-wrapper select {
+    flex: 1;
+    max-width: 220px;
+  }
+
+  .map-action-btns {
+    width: 100%;
+  }
+
+  .btn-map-control {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .map-legend-bar {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  .legend-items-list {
+    gap: 10px;
+  }
+
+  .legend-item {
+    font-size: 0.76rem;
+  }
+
+  /* Tables & Grids */
+  .fares-table th, .fares-table td {
+    padding: 12px 14px;
+    font-size: 0.84rem;
+  }
+
+  .payment-grid, .sale-points-grid, .news-grid, .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    padding: 12px;
+  }
+
+  .modal-card {
+    max-height: 92vh;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-live-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .chips-grid {
+    gap: 5px;
+  }
+
+  .time-chip {
+    padding: 4px 9px;
+    font-size: 0.78rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+/* ==========================================================================
+   SMALL PHONE (<= 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .brand-text h1 {
+    font-size: 1rem;
+  }
+
+  .brand-text span {
+    display: none; /* Keep header concise on tiny phones */
+  }
+
+  .company-status-badge {
+    display: none; /* Save space for lang switcher and logo */
+  }
+
+  .hero-title {
+    font-size: 1.55rem;
+  }
+
+  .hero-badge-top {
+    font-size: 0.72rem;
+    padding: 4px 12px;
+  }
+
+  .map-select-wrapper label span {
+    display: none; /* Icon only on ultra compact */
+  }
+
+  .btn-map-control span {
+    font-size: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   MOBILE LANDSCAPE ORIENTATION (e.g. 568px - 900px width with low height <= 500px)
+   ========================================================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --header-height: 52px;
+  }
+
+  .mobile-bottom-nav {
+    height: 50px;
+  }
+
+  .mobile-nav-item i {
+    font-size: 1.05rem;
+  }
+
+  .mobile-nav-item span {
+    font-size: 0.65rem;
+  }
+
+  body {
+    padding-bottom: 58px;
+  }
+
+  .hero-section {
+    padding: 24px 0 32px;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+
+  .hero-search-card {
+    flex-direction: row;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+  }
+
+  .hero-quick-tags {
+    margin-bottom: 10px;
+  }
+
+  .hero-status-banner {
+    display: none;
+  }
+
+  .section {
+    padding: 36px 0;
+  }
+
+  .section-header {
+    margin-bottom: 18px;
+  }
+
+  .map-canvas-container {
+    height: 280px;
+  }
+
+  .modal-card {
+    max-height: 96vh;
+  }
+
+  .modal-header {
+    padding: 10px 16px;
+  }
+
+  .modal-body {
+    padding: 12px 16px;
+  }
+
+  .whatsapp-float-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+    bottom: 58px;
+    right: 14px;
+  }
+}
