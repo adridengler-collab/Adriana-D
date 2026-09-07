@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#09131b">
-  
+
   <!-- SEO & Social Meta Tags -->
   <title>Transporte Urbano Puerto Iguazú | Horarios, Recorridos y Mapa en Vivo - Río Uruguay</title>
-  <meta name="description" content="Consulta en tiempo real horarios, recorridos, tarifas y líneas de colectivos en Puerto Iguazú. Colectivos a Cataratas del Iguazú, Hito Tres Fronteras, Aeropuerto y barrios locales.">
-  <meta name="keywords" content="colectivo cataratas iguazu, transporte urbano puerto iguazu, rio uruguay iguazu, horarios colectivos iguazu, tarifas colectivos iguazu, bus hito tres fronteras, bus aeropuerto iguazu">
+  <meta name="description"
+    content="Consulta en tiempo real horarios, recorridos, tarifas y líneas de colectivos en Puerto Iguazú. Colectivos a Cataratas del Iguazú, Hito Tres Fronteras, Aeropuerto y barrios locales.">
+  <meta name="keywords"
+    content="colectivo cataratas iguazu, transporte urbano puerto iguazu, rio uruguay iguazu, horarios colectivos iguazu, tarifas colectivos iguazu, bus hito tres fronteras, bus aeropuerto iguazu">
   <meta name="author" content="Transporte Urbano Puerto Iguazú">
-  
+
   <!-- Open Graph -->
   <meta property="og:title" content="Transporte Urbano Puerto Iguazú - Horarios y Recorridos en Vivo">
-  <meta property="og:description" content="Guía completa del transporte público en Puerto Iguazú. Cataratas, Aeropuerto, Hito 3 Fronteras y barrios.">
+  <meta property="og:description"
+    content="Guía completa del transporte público en Puerto Iguazú. Cataratas, Aeropuerto, Hito 3 Fronteras y barrios.">
   <meta property="og:type" content="website">
 
   <!-- Favicon & Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  
+
   <!-- Leaflet Map CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
   <!-- Application Stylesheets -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
+
 <body>
 
   <!-- ==========================================================================
@@ -89,18 +97,21 @@
 
       <h1 class="hero-title" data-i18n="hero_title">Moverte por Iguazú nunca fue tan fácil</h1>
       <p class="hero-subtitle" data-i18n="hero_subtitle">
-        Consulta en tiempo real recorridos, frecuencias, tarifas y planifica tu viaje a Cataratas, Hito Tres Fronteras, Aeropuerto y todos los barrios.
+        Consulta en tiempo real recorridos, frecuencias, tarifas y planifica tu viaje a Cataratas, Hito Tres Fronteras,
+        Aeropuerto y todos los barrios.
       </p>
 
       <!-- Quick Search Bar -->
       <div class="hero-search-card">
         <div class="search-input-group">
           <i class="bi bi-geo-alt-fill"></i>
-          <input type="text" id="hero-origin-input" placeholder="¿Dónde estás? (Ej: Terminal, Centro)" data-i18n-placeholder="hero_search_origin">
+          <input type="text" id="hero-origin-input" placeholder="¿Dónde estás? (Ej: Terminal, Centro)"
+            data-i18n-placeholder="hero_search_origin">
         </div>
         <div class="search-input-group">
           <i class="bi bi-geo-fill"></i>
-          <input type="text" id="hero-dest-input" placeholder="¿A dónde vas? (Ej: Cataratas, Aeropuerto)" data-i18n-placeholder="hero_search_dest">
+          <input type="text" id="hero-dest-input" placeholder="¿A dónde vas? (Ej: Cataratas, Aeropuerto)"
+            data-i18n-placeholder="hero_search_dest">
         </div>
         <button class="btn-hero-submit" id="btn-hero-search">
           <i class="bi bi-search"></i>
@@ -131,7 +142,8 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="nav_lines">Líneas y Horarios de Colectivos</h2>
-        <p class="section-subtitle">Selecciona una línea para ver su recorrido detallado, frecuencias fijas y salidas en vivo.</p>
+        <p class="section-subtitle">Selecciona una línea para ver su recorrido detallado, frecuencias fijas y salidas en
+          vivo.</p>
       </div>
 
       <!-- Category Filter Pills & Search -->
@@ -160,7 +172,8 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="planner_title">Planificador de Viajes Inteligente</h2>
-        <p class="section-subtitle" data-i18n="planner_subtitle">Selecciona tu punto de partida y destino para conocer la mejor combinación de colectivos.</p>
+        <p class="section-subtitle" data-i18n="planner_subtitle">Selecciona tu punto de partida y destino para conocer
+          la mejor combinación de colectivos.</p>
       </div>
 
       <div class="planner-container-grid">
@@ -170,12 +183,14 @@
             <label class="planner-field-label" data-i18n="planner_from_label">Origen</label>
             <div class="planner-input-box">
               <i class="bi bi-circle-fill text-emerald"></i>
-              <input type="text" id="planner-origin-input" placeholder="Ej: Terminal de Ómnibus" value="Terminal de Ómnibus Central">
+              <input type="text" id="planner-origin-input" placeholder="Ej: Terminal de Ómnibus"
+                value="Terminal de Ómnibus Central">
             </div>
           </div>
 
           <div class="planner-swap-row">
-            <button class="btn-swap-locations" id="btn-swap-locations" title="Invertir origen y destino" aria-label="Invertir origen y destino">
+            <button class="btn-swap-locations" id="btn-swap-locations" title="Invertir origen y destino"
+              aria-label="Invertir origen y destino">
               <i class="bi bi-arrow-down-up"></i>
             </button>
           </div>
@@ -184,7 +199,8 @@
             <label class="planner-field-label" data-i18n="planner_to_label">Destino</label>
             <div class="planner-input-box">
               <i class="bi bi-geo-alt-fill text-amber"></i>
-              <input type="text" id="planner-dest-input" placeholder="Ej: Cataratas Argentinas, Aeropuerto, Hito..." value="Parque Nacional Iguazú (Cataratas)">
+              <input type="text" id="planner-dest-input" placeholder="Ej: Cataratas Argentinas, Aeropuerto, Hito..."
+                value="Parque Nacional Iguazú (Cataratas)">
             </div>
           </div>
 
@@ -213,13 +229,15 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="map_section_title">Mapa Interactivo de Recorridos y Paradas</h2>
-        <p class="section-subtitle" data-i18n="map_section_subtitle">Explora las rutas trazadas, paradas autorizadas y localiza tu posición actual en Puerto Iguazú.</p>
+        <p class="section-subtitle" data-i18n="map_section_subtitle">Explora las rutas trazadas, paradas autorizadas y
+          localiza tu posición actual en Puerto Iguazú.</p>
       </div>
 
       <!-- Map Toolbar -->
       <div class="map-control-bar">
         <div class="map-select-wrapper">
-          <label for="map-line-select"><i class="bi bi-layers-fill text-emerald"></i> <span data-i18n="map_legend_title">Líneas en Mapa:</span></label>
+          <label for="map-line-select"><i class="bi bi-layers-fill text-emerald"></i> <span
+              data-i18n="map_legend_title">Líneas en Mapa:</span></label>
           <select id="map-line-select">
             <option value="all">Todas las Líneas</option>
           </select>
@@ -230,7 +248,8 @@
             <i class="bi bi-crosshair text-blue"></i> <span data-i18n="map_btn_my_location">Mi Ubicación (GPS)</span>
           </button>
           <button class="btn-map-control" id="btn-center-terminal">
-            <i class="bi bi-geo-alt-fill text-emerald"></i> <span data-i18n="map_btn_center_terminal">Centrar en Iguazú</span>
+            <i class="bi bi-geo-alt-fill text-emerald"></i> <span data-i18n="map_btn_center_terminal">Centrar en
+              Iguazú</span>
           </button>
           <button class="btn-map-control" id="btn-reset-map">
             <i class="bi bi-arrows-fullscreen"></i> <span data-i18n="map_btn_reset">Ver Recorrido Completo</span>
@@ -244,10 +263,14 @@
           <i class="bi bi-info-circle-fill text-blue"></i> <span>Referencias:</span>
         </div>
         <div class="legend-items-list">
-          <span class="legend-item"><span class="legend-marker-sample user"></span> <span data-i18n="map_legend_user">Tu Ubicación</span></span>
-          <span class="legend-item"><span class="legend-marker-sample origin"></span> <span data-i18n="map_legend_origin">Punto de Partida</span></span>
-          <span class="legend-item"><span class="legend-marker-sample stop"></span> <span data-i18n="map_legend_stop">Parada</span></span>
-          <span class="legend-item"><span class="legend-marker-sample dest"></span> <span data-i18n="map_legend_dest">Destino Final</span></span>
+          <span class="legend-item"><span class="legend-marker-sample user"></span> <span data-i18n="map_legend_user">Tu
+              Ubicación</span></span>
+          <span class="legend-item"><span class="legend-marker-sample origin"></span> <span
+              data-i18n="map_legend_origin">Punto de Partida</span></span>
+          <span class="legend-item"><span class="legend-marker-sample stop"></span> <span
+              data-i18n="map_legend_stop">Parada</span></span>
+          <span class="legend-item"><span class="legend-marker-sample dest"></span> <span
+              data-i18n="map_legend_dest">Destino Final</span></span>
         </div>
       </div>
 
@@ -265,7 +288,8 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="fares_title">Tarifas Actualizadas y Medios de Pago</h2>
-        <p class="section-subtitle" data-i18n="fares_subtitle">Precios oficiales del transporte urbano y formas de abono para residentes y visitantes.</p>
+        <p class="section-subtitle" data-i18n="fares_subtitle">Precios oficiales del transporte urbano y formas de abono
+          para residentes y visitantes.</p>
       </div>
 
       <!-- Fares Table -->
@@ -297,7 +321,8 @@
       <!-- Points of Sale -->
       <div class="section-header mt-3">
         <h3 class="section-title" data-i18n="points_title">Puntos de Venta y Recarga</h3>
-        <p class="section-subtitle" data-i18n="points_subtitle">Lugares habilitados para adquirir boletos y recargar tu saldo.</p>
+        <p class="section-subtitle" data-i18n="points_subtitle">Lugares habilitados para adquirir boletos y recargar tu
+          saldo.</p>
       </div>
       <div class="sale-points-grid" id="sale-points-grid">
         <!-- Dynamically populated -->
@@ -312,7 +337,8 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="news_title">Estado del Servicio y Avisos</h2>
-        <p class="section-subtitle" data-i18n="news_subtitle">Información operativa en tiempo real, desvíos temporales y refuerzos de temporada.</p>
+        <p class="section-subtitle" data-i18n="news_subtitle">Información operativa en tiempo real, desvíos temporales y
+          refuerzos de temporada.</p>
       </div>
 
       <div class="news-grid" id="news-feed-container">
@@ -328,13 +354,15 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="faq_title">Preguntas Frecuentes</h2>
-        <p class="section-subtitle" data-i18n="faq_subtitle">Respuestas rápidas a las consultas más habituales de usuarios y turistas.</p>
+        <p class="section-subtitle" data-i18n="faq_subtitle">Respuestas rápidas a las consultas más habituales de
+          usuarios y turistas.</p>
       </div>
 
       <!-- Search FAQ -->
       <div class="faq-search-box">
         <i class="bi bi-search"></i>
-        <input type="text" id="faq-search-input" placeholder="Buscar una pregunta (ej: equipaje, SUBE, Parque)..." data-i18n-placeholder="faq_search_placeholder">
+        <input type="text" id="faq-search-input" placeholder="Buscar una pregunta (ej: equipaje, SUBE, Parque)..."
+          data-i18n-placeholder="faq_search_placeholder">
       </div>
 
       <!-- FAQ Accordion -->
@@ -351,7 +379,8 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="contact_title">Atención al Pasajero</h2>
-        <p class="section-subtitle" data-i18n="contact_subtitle">¿Tienes dudas sobre recorridos, objetos perdidos o reclamos? Estamos para ayudarte.</p>
+        <p class="section-subtitle" data-i18n="contact_subtitle">¿Tienes dudas sobre recorridos, objetos perdidos o
+          reclamos? Estamos para ayudarte.</p>
       </div>
 
       <div class="contact-grid">
@@ -376,7 +405,9 @@
           <i class="bi bi-whatsapp"></i>
           <div>
             <h4 data-i18n="contact_whatsapp">WhatsApp de Consultas:</h4>
-            <p><a href="https://wa.me/5493757548921?text=Hola%2C%20quisiera%20consultar%20sobre%20los%20colectivos%20en%20Iguaz%C3%BA" target="_blank" rel="noopener">+54 9 3757 54-8921</a></p>
+            <p><a
+                href="https://wa.me/5493757548921?text=Hola%2C%20quisiera%20consultar%20sobre%20los%20colectivos%20en%20Iguaz%C3%BA"
+                target="_blank" rel="noopener">+54 9 3757 54-8921</a></p>
           </div>
         </div>
 
@@ -390,7 +421,8 @@
       </div>
 
       <div class="footer-bottom">
-        <p data-i18n="footer_rights">© 2026 Transporte Urbano Puerto Iguazú - Empresa Río Uruguay. Todos los derechos reservados.</p>
+        <p data-i18n="footer_rights">© 2026 Transporte Urbano Puerto Iguazú - Empresa Río Uruguay. Todos los derechos
+          reservados.</p>
         <p>Desarrollado para la comunidad y visitantes de las Cataratas del Iguazú 🌴</p>
       </div>
     </div>
@@ -415,8 +447,10 @@
       </div>
 
       <div class="modal-tabs-bar" role="tablist">
-        <button class="modal-tab-btn active" role="tab" data-tab="schedules" data-i18n="line_tab_schedule">Horarios Fijos</button>
-        <button class="modal-tab-btn" role="tab" data-tab="stops" data-i18n="line_tab_route">Recorrido y Paradas</button>
+        <button class="modal-tab-btn active" role="tab" data-tab="schedules" data-i18n="line_tab_schedule">Horarios
+          Fijos</button>
+        <button class="modal-tab-btn" role="tab" data-tab="stops" data-i18n="line_tab_route">Recorrido y
+          Paradas</button>
         <button class="modal-tab-btn" role="tab" data-tab="live" data-i18n="line_tab_live">En Vivo</button>
       </div>
 
@@ -424,14 +458,16 @@
         <!-- Tab: Horarios Fijos -->
         <div class="modal-tab-pane active" id="modal-tab-schedules" role="tabpanel">
           <div class="schedule-direction-block">
-            <h4><i class="bi bi-arrow-right-circle text-emerald"></i> <span data-i18n="line_direction_ida">Ida (Hacia Destino)</span></h4>
+            <h4><i class="bi bi-arrow-right-circle text-emerald"></i> <span data-i18n="line_direction_ida">Ida (Hacia
+                Destino)</span></h4>
             <div class="chips-grid" id="modal-schedule-ida">
               <!-- Dynamically populated -->
             </div>
           </div>
 
           <div class="schedule-direction-block mt-3">
-            <h4><i class="bi bi-arrow-left-circle text-blue"></i> <span data-i18n="line_direction_vuelta">Vuelta (Hacia Terminal/Centro)</span></h4>
+            <h4><i class="bi bi-arrow-left-circle text-blue"></i> <span data-i18n="line_direction_vuelta">Vuelta (Hacia
+                Terminal/Centro)</span></h4>
             <div class="chips-grid" id="modal-schedule-vuelta">
               <!-- Dynamically populated -->
             </div>
@@ -441,14 +477,16 @@
         <!-- Tab: Recorrido y Paradas -->
         <div class="modal-tab-pane" id="modal-tab-stops" role="tabpanel">
           <div class="schedule-direction-block">
-            <h4><i class="bi bi-signpost-2 text-emerald"></i> <span data-i18n="line_direction_ida">Ida (Sentido hacia Destino)</span></h4>
+            <h4><i class="bi bi-signpost-2 text-emerald"></i> <span data-i18n="line_direction_ida">Ida (Sentido hacia
+                Destino)</span></h4>
             <div class="stops-step-list" id="modal-stops-ida">
               <!-- Dynamically populated -->
             </div>
           </div>
 
           <div class="schedule-direction-block mt-3">
-            <h4><i class="bi bi-signpost-2 text-blue"></i> <span data-i18n="line_direction_vuelta">Vuelta (Sentido hacia Terminal)</span></h4>
+            <h4><i class="bi bi-signpost-2 text-blue"></i> <span data-i18n="line_direction_vuelta">Vuelta (Sentido hacia
+                Terminal)</span></h4>
             <div class="stops-step-list" id="modal-stops-vuelta">
               <!-- Dynamically populated -->
             </div>
@@ -494,14 +532,17 @@
   </div>
 
   <!-- Floating WhatsApp Action -->
-  <a href="https://wa.me/5493757548921?text=Hola%2C%20quisiera%20consultar%20sobre%20los%20colectivos%20en%20Iguaz%C3%BA" target="_blank" rel="noopener" class="whatsapp-float-btn" title="Consultas directas por WhatsApp" aria-label="WhatsApp Río Uruguay">
+  <a href="https://wa.me/5493757548921?text=Hola%2C%20quisiera%20consultar%20sobre%20los%20colectivos%20en%20Iguaz%C3%BA"
+    target="_blank" rel="noopener" class="whatsapp-float-btn" title="Consultas directas por WhatsApp"
+    aria-label="WhatsApp Río Uruguay">
     <i class="bi bi-whatsapp"></i>
   </a>
 
   <!-- ==========================================================================
        SCRIPTS (LEAFLET, DATA, I18N, PLANNER, MAP, APP)
        ========================================================================== -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="js/data.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/planner.js"></script>
@@ -509,4 +550,5 @@
   <script src="js/app.js"></script>
 
 </body>
+
 </html>
