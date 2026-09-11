@@ -1,5 +1,9 @@
-﻿/**
+/**
  * Aplicación Principal - Transporte Urbano Puerto Iguazú (Río Uruguay)
+ *
+ * Gestión de datos: Todas las tarifas, horarios fijos y frecuencias se muestran
+ * en estado "Pendiente de confirmación oficial" / "Información no disponible"
+ * hasta obtener los datos oficiales de primera mano en la entrevista.
  */
 
 class IguazuTransportApp {
@@ -8,7 +12,6 @@ class IguazuTransportApp {
     this.activeCategory = "all";
     this.activeDayType = "weekday"; // weekday | saturday | sunday
     this.activeDirection = "ida"; // ida | vuelta
-    this.countdownTimer = null;
   }
 
   init() {
@@ -26,17 +29,44 @@ class IguazuTransportApp {
     this.renderFaqs();
     this.renderMapSelectOptions();
     this.updateCompanyStatus();
-
-    // Iniciar reloj y simulador de salidas en vivo
-    this.startLiveCountdownEngine();
+    this.updateDataMeta();
 
     // Listeners de UI
     this.setupEventListeners();
 
     // Inicializar mapa cuando el DOM esté listo
     setTimeout(() => {
-      window.IguazuMap.init();
+      if (window.IguazuMap) {
+        window.IguazuMap.init();
+      }
     }, 200);
+  }
+
+  /**
+   * Actualiza el indicador centralizado de fecha de actualización de datos
+   */
+  updateDataMeta() {
+    const meta = TRANSPORT_DATA.meta;
+    const lang = window.I18n ? window.I18n.currentLang : "es";
+    const updateEls = document.querySelectorAll(".data-last-update-display");
+    
+    let fullLabel = "";
+    if (meta.lastUpdated) {
+      const prefix = (meta.lastUpdatedPrefix && meta.lastUpdatedPrefix[lang]) || window.I18n.getText("last_update_prefix") || "Última actualización de datos:";
+      fullLabel = `${prefix} ${meta.lastUpdated}`;
+    } else {
+      fullLabel = (meta.pendingStatusText && meta.pendingStatusText[lang]) || window.I18n.getText("official_data_pending") || "Datos oficiales: pendientes de confirmación";
+    }
+
+    updateEls.forEach(el => {
+      el.textContent = fullLabel;
+    });
+
+    const pendingNotices = document.querySelectorAll(".data-pending-notice-display");
+    const noticeText = (meta.noticePendingOfficial && meta.noticePendingOfficial[lang]) || window.I18n.getText("notice_pending_official") || "Información de tarifas y horarios pendiente de confirmación oficial.";
+    pendingNotices.forEach(el => {
+      el.textContent = noticeText;
+    });
   }
 
   updateCompanyStatus() {
@@ -53,7 +83,7 @@ class IguazuTransportApp {
     }
 
     if (statusText) {
-      const currentLang = window.I18n.currentLang;
+      const currentLang = window.I18n ? window.I18n.currentLang : "es";
       statusText.textContent = company.statusMessage[currentLang] || company.statusMessage.es;
     }
   }
@@ -108,15 +138,22 @@ class IguazuTransportApp {
 
     container.innerHTML = "";
     TRANSPORT_DATA.lines.forEach(line => {
-      const lang = window.I18n.currentLang;
+      const lang = window.I18n ? window.I18n.currentLang : "es";
       const desc = line.description[lang] || line.description.es;
       const card = document.createElement("div");
       card.className = "line-card";
       card.setAttribute("data-line-id", line.id);
       card.setAttribute("data-type", line.type);
 
-      // Calcular próximo bus en vivo
-      const nextBus = this.calculateNextDeparture(line.schedule.ida);
+      const freqText = line.frequency && line.frequency.weekday 
+        ? line.frequency.weekday 
+        : window.I18n.getText("frequency_not_available");
+
+      const firstBusText = line.firstBus ? `${line.firstBus} hs` : window.I18n.getText("pending_confirmation");
+      const lastBusText = line.lastBus ? `${line.lastBus} hs` : window.I18n.getText("pending_confirmation");
+      const fareText = (line.price && line.price.tourist) 
+        ? `$${line.price.tourist.toLocaleString()}` 
+        : window.I18n.getText("info_not_available");
 
       card.innerHTML = `
         <div class="line-card-header" style="border-left: 6px solid ${line.badgeColor}">
@@ -125,18 +162,15 @@ class IguazuTransportApp {
           </div>
           <div class="line-title-group">
             <h3 class="line-name">${line.name}</h3>
-            <span class="line-frequency"><i class="bi bi-clock-history"></i> ${line.frequency.weekday}</span>
+            <span class="line-frequency"><i class="bi bi-clock-history"></i> ${freqText}</span>
           </div>
         </div>
 
         <p class="line-desc">${desc}</p>
 
-        <div class="line-live-badge-widget">
-          <div class="live-dot-pulse"></div>
-          <div class="live-text-info">
-            <span class="live-label">${window.I18n.getText("live_next_bus_title")}:</span>
-            <strong class="live-time-val">${nextBus.text}</strong>
-          </div>
+        <div class="line-notice-pending">
+          <i class="bi bi-info-circle text-blue"></i>
+          <span>${window.I18n.getText("notice_pending_official")}</span>
         </div>
 
         <div class="line-meta-grid">
@@ -144,14 +178,14 @@ class IguazuTransportApp {
             <i class="bi bi-arrow-up-right-circle"></i>
             <div>
               <small>${window.I18n.getText("line_first_bus")}</small>
-              <strong>${line.firstBus} hs</strong>
+              <strong>${firstBusText}</strong>
             </div>
           </div>
           <div class="meta-item">
             <i class="bi bi-arrow-down-left-circle"></i>
             <div>
               <small>${window.I18n.getText("line_last_bus")}</small>
-              <strong>${line.lastBus} hs</strong>
+              <strong>${lastBusText}</strong>
             </div>
           </div>
           <div class="meta-item">
@@ -164,15 +198,15 @@ class IguazuTransportApp {
           <div class="meta-item">
             <i class="bi bi-tag-fill"></i>
             <div>
-              <small>Boleto</small>
-              <strong>$${line.price.tourist.toLocaleString()}</strong>
+              <small>Tarifa</small>
+              <strong style="font-size:0.78rem; color: var(--text-muted);">${fareText}</strong>
             </div>
           </div>
         </div>
 
         <div class="line-card-actions">
           <button class="btn-primary-outline" onclick="window.IguazuApp.openLineDetail('${line.id}')">
-            <i class="bi bi-calendar-range"></i> ${window.I18n.getText("line_view_details")}
+            <i class="bi bi-signpost-2"></i> ${window.I18n.getText("line_view_details")}
           </button>
           <button class="btn-icon-map" title="${window.I18n.getText("line_show_on_map")}" onclick="window.IguazuApp.viewLineOnMap('${line.id}')">
             <i class="bi bi-map-fill"></i>
@@ -206,33 +240,6 @@ class IguazuTransportApp {
     });
   }
 
-  calculateNextDeparture(scheduleList) {
-    const now = new Date();
-    const currentMins = now.getHours() * 60 + now.getMinutes();
-
-    for (const timeStr of scheduleList) {
-      const [h, m] = timeStr.split(":").map(Number);
-      const departureMins = h * 60 + m;
-
-      if (departureMins >= currentMins) {
-        const diff = departureMins - currentMins;
-        if (diff === 0) {
-          return { text: window.I18n.getText("live_now"), time: timeStr, minutes: 0 };
-        } else {
-          return { text: `${timeStr} hs (en ${diff} min)`, time: timeStr, minutes: diff };
-        }
-      }
-    }
-
-    // Si ya pasaron todas las salidas de hoy
-    const firstTomorrow = scheduleList[0];
-    return {
-      text: `${window.I18n.getText("live_service_finished")} ${firstTomorrow} hs`,
-      time: firstTomorrow,
-      minutes: -1
-    };
-  }
-
   openLineDetail(lineId) {
     const line = TRANSPORT_DATA.lines.find(l => l.id === lineId);
     if (!line) return;
@@ -243,11 +250,13 @@ class IguazuTransportApp {
     const badgeEl = document.getElementById("modal-line-badge");
     const descEl = document.getElementById("modal-line-desc");
 
-    const lang = window.I18n.currentLang;
-    headerTitle.textContent = line.name;
-    badgeEl.textContent = line.number;
-    badgeEl.style.backgroundColor = line.badgeColor;
-    descEl.textContent = line.description[lang] || line.description.es;
+    const lang = window.I18n ? window.I18n.currentLang : "es";
+    if (headerTitle) headerTitle.textContent = line.name;
+    if (badgeEl) {
+      badgeEl.textContent = line.number;
+      badgeEl.style.backgroundColor = line.badgeColor;
+    }
+    if (descEl) descEl.textContent = line.description[lang] || line.description.es;
 
     // Renderizar subsecciones del modal
     this.renderModalSchedules();
@@ -274,23 +283,16 @@ class IguazuTransportApp {
     const tableBodyVuelta = document.getElementById("modal-schedule-vuelta");
     if (!this.selectedLine || !tableBodyIda || !tableBodyVuelta) return;
 
-    const line = this.selectedLine;
-    const now = new Date();
-    const currentMins = now.getHours() * 60 + now.getMinutes();
+    const pendingHtml = `
+      <div class="modal-pending-box">
+        <i class="bi bi-clock-history"></i>
+        <p><strong>${window.I18n.getText("modal_schedules_pending")}</strong></p>
+        <small class="text-muted">${window.I18n.getText("notice_pending_official")}</small>
+      </div>
+    `;
 
-    const generateScheduleChips = (scheduleArray) => {
-      return scheduleArray.map(time => {
-        const [h, m] = time.split(":").map(Number);
-        const mins = h * 60 + m;
-        const isPast = mins < currentMins;
-        const isNext = mins >= currentMins && mins <= currentMins + 30;
-        const chipClass = isNext ? "time-chip next-chip" : (isPast ? "time-chip past-chip" : "time-chip");
-        return `<span class="${chipClass}">${time}</span>`;
-      }).join("");
-    };
-
-    tableBodyIda.innerHTML = generateScheduleChips(line.schedule.ida);
-    tableBodyVuelta.innerHTML = generateScheduleChips(line.schedule.vuelta);
+    tableBodyIda.innerHTML = pendingHtml;
+    tableBodyVuelta.innerHTML = pendingHtml;
   }
 
   renderModalRouteStops() {
@@ -321,22 +323,11 @@ class IguazuTransportApp {
     const liveContainer = document.getElementById("modal-live-content");
     if (!this.selectedLine || !liveContainer) return;
 
-    const line = this.selectedLine;
-    const nextIda = this.calculateNextDeparture(line.schedule.ida);
-    const nextVuelta = this.calculateNextDeparture(line.schedule.vuelta);
-
     liveContainer.innerHTML = `
-      <div class="modal-live-grid">
-        <div class="live-direction-card">
-          <h4><i class="bi bi-arrow-right-circle-fill text-emerald"></i> ${window.I18n.getText("line_direction_ida")}</h4>
-          <div class="live-big-time">${nextIda.text}</div>
-          <p class="live-hint">${window.I18n.getText("live_frequency")}: <strong>${line.frequency.weekday}</strong></p>
-        </div>
-        <div class="live-direction-card">
-          <h4><i class="bi bi-arrow-left-circle-fill text-blue"></i> ${window.I18n.getText("line_direction_vuelta")}</h4>
-          <div class="live-big-time">${nextVuelta.text}</div>
-          <p class="live-hint">${window.I18n.getText("live_frequency")}: <strong>${line.frequency.weekday}</strong></p>
-        </div>
+      <div class="modal-pending-box" style="padding: 2rem 1rem;">
+        <i class="bi bi-info-circle text-blue" style="font-size: 2.2rem; margin-bottom: 0.5rem; display: inline-block;"></i>
+        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${window.I18n.getText("live_next_bus_title")}</h4>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">${window.I18n.getText("notice_pending_official")}</p>
       </div>
     `;
   }
@@ -352,7 +343,9 @@ class IguazuTransportApp {
     if (lineSelect) {
       lineSelect.value = lineId;
     }
-    window.IguazuMap.filterByLine(lineId);
+    if (window.IguazuMap) {
+      window.IguazuMap.filterByLine(lineId);
+    }
   }
 
   renderFaresTable() {
@@ -366,14 +359,16 @@ class IguazuTransportApp {
       const desc = window.I18n.getText(fare.descriptionKey);
       const validBadges = fare.validFor.map(l => `<span class="badge-mini">${l}</span>`).join(" ");
 
+      const pendingCell = `<span class="pending-cell-text">${window.I18n.getText("info_not_available")}</span>`;
+
       tr.innerHTML = `
         <td>
           <strong>${title}</strong>
           <small class="table-subdesc">${desc}</small>
         </td>
-        <td class="price-cell ars">$${fare.priceARS.toLocaleString("es-AR")}</td>
-        <td class="price-cell brl">R$ ${fare.priceBRL}</td>
-        <td class="price-cell usd">US$ ${fare.priceUSD}</td>
+        <td class="price-cell ars">${pendingCell}</td>
+        <td class="price-cell brl">${pendingCell}</td>
+        <td class="price-cell usd">${pendingCell}</td>
         <td>${validBadges}</td>
       `;
       tbody.appendChild(tr);
@@ -384,19 +379,15 @@ class IguazuTransportApp {
     const container = document.getElementById("payment-methods-grid");
     if (!container) return;
 
-    container.innerHTML = "";
-    TRANSPORT_DATA.paymentMethods.forEach(method => {
-      const card = document.createElement("div");
-      card.className = "payment-card";
-      card.innerHTML = `
+    container.innerHTML = `
+      <div class="payment-card pending-notice-card">
         <div class="payment-icon-box">
-          <i class="bi ${method.icon}"></i>
+          <i class="bi bi-clock-history"></i>
         </div>
-        <h4 class="payment-title">${window.I18n.getText(method.titleKey)}</h4>
-        <p class="payment-desc">${window.I18n.getText(method.descKey)}</p>
-      `;
-      container.appendChild(card);
-    });
+        <h4 class="payment-title">${window.I18n.getText("pay_pending_title")}</h4>
+        <p class="payment-desc">${window.I18n.getText("pay_pending_desc")}</p>
+      </div>
+    `;
   }
 
   renderSalePoints() {
@@ -497,6 +488,12 @@ class IguazuTransportApp {
     const origin = originInput.value;
     const dest = destInput.value;
 
+    // Sincronizar inputs del mapa
+    const mapOrigin = document.getElementById("map-origin-input");
+    const mapDest = document.getElementById("map-dest-input");
+    if (mapOrigin) mapOrigin.value = origin;
+    if (mapDest) mapDest.value = dest;
+
     if (!origin || !dest) {
       resultsContainer.innerHTML = `
         <div class="planner-card error">
@@ -510,11 +507,56 @@ class IguazuTransportApp {
     const plan = window.TripPlanner.planJourney(origin, dest);
 
     if (!plan.success) {
+      const msg = window.I18n ? window.I18n.getText(plan.messageKey || "map_error_no_route") : (plan.message || "No se encontró una ruta.");
       resultsContainer.innerHTML = `
         <div class="planner-card not-found">
           <i class="bi bi-search"></i>
-          <h4>No se encontró una ruta exacta</h4>
-          <p>${plan.message}</p>
+          <h4>No se encontró una conexión directa</h4>
+          <p>${msg}</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Trazar en el mapa Leaflet
+    if (window.IguazuMap) {
+      window.IguazuMap.renderTripPlan(plan);
+    }
+
+    const walkText = window.I18n ? window.I18n.getText("map_step_walk") : "Caminar";
+    const busText = window.I18n ? window.I18n.getText("map_step_bus") : "Colectivo";
+    const stopsText = window.I18n ? window.I18n.getText("map_stops_count") : "paradas";
+    const infoNotAvailable = window.I18n ? window.I18n.getText("info_not_available") : "Información no disponible";
+
+    if (plan.isWalkingOnly) {
+      resultsContainer.innerHTML = `
+        <div class="planner-result-card animate-fade-in">
+          <div class="result-header bg-slate-800">
+            <span class="result-badge"><i class="bi bi-person-walking"></i> ${walkText}</span>
+            <h3>${plan.origin.name} ➔ ${plan.dest.name}</h3>
+          </div>
+          <div class="result-body">
+            <div class="result-stat-row">
+              <div class="stat-box">
+                <i class="bi bi-clock-fill text-emerald"></i>
+                <small>${window.I18n.getText("planner_estimated_time")}</small>
+                <strong>${plan.estimatedTime}</strong>
+              </div>
+              <div class="stat-box">
+                <i class="bi bi-signpost-fill text-blue"></i>
+                <small>Distancia</small>
+                <strong>${plan.totalDistanceKm.toFixed(2)} km</strong>
+              </div>
+            </div>
+            <p class="mt-2 text-muted" style="font-size: 0.9rem;">
+              <i class="bi bi-info-circle-fill text-blue"></i> Tu destino se encuentra a corta distancia a pie (${plan.totalDistanceKm.toFixed(2)} km).
+            </p>
+            <div class="result-actions mt-3">
+              <a href="#mapa" class="btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+                <i class="bi bi-geo-alt-fill"></i> ${window.I18n.getText("planner_view_map_btn")}
+              </a>
+            </div>
+          </div>
         </div>
       `;
       return;
@@ -537,12 +579,12 @@ class IguazuTransportApp {
               <div class="stat-box">
                 <i class="bi bi-arrow-repeat text-blue"></i>
                 <small>Frecuencia</small>
-                <strong>${plan.frequency}</strong>
+                <strong style="font-size:0.8rem; color:var(--text-muted);">${infoNotAvailable}</strong>
               </div>
               <div class="stat-box">
                 <i class="bi bi-ticket-perforated-fill text-amber"></i>
                 <small>${window.I18n.getText("planner_estimated_fare")}</small>
-                <strong>$${plan.priceARS.toLocaleString()} ARS</strong>
+                <strong style="font-size:0.8rem; color:var(--text-muted);">${infoNotAvailable}</strong>
               </div>
             </div>
 
@@ -550,39 +592,44 @@ class IguazuTransportApp {
               <div class="journey-point start">
                 <div class="point-circle"></div>
                 <div class="point-info">
-                  <span class="point-label">${window.I18n.getText("planner_boarding_at")}</span>
-                  <strong>${plan.boardingPoint}</strong>
+                  <span class="point-label">${walkText} ~${plan.walkStart.durationMin} min (${plan.walkStart.distanceKm.toFixed(2)} km)</span>
+                  <strong>${plan.origin.name} ➔ ${plan.boardingStop.name}</strong>
                 </div>
               </div>
+
               <div class="journey-segment" style="border-left-color: ${plan.line.badgeColor}">
-                <span><i class="bi bi-bus-front"></i> Viaje directo en ${plan.line.name}</span>
+                <span><i class="bi bi-bus-front"></i> ${busText}: ${plan.line.name} (${plan.stopCount} ${stopsText}, ~${plan.transit.durationMin} min aprox.)</span>
+                <small style="display:block; color: var(--text-muted); margin-top:2px;">
+                  Subir en: <b>${plan.boardingStop.name}</b> • Bajar en: <b>${plan.dropoffStop.name}</b>
+                </small>
               </div>
+
               <div class="journey-point end">
                 <div class="point-circle"></div>
                 <div class="point-info">
-                  <span class="point-label">${window.I18n.getText("planner_dropoff_at")}</span>
-                  <strong>${plan.dropoffPoint}</strong>
+                  <span class="point-label">${walkText} ~${plan.walkEnd.durationMin} min (${plan.walkEnd.distanceKm.toFixed(2)} km)</span>
+                  <strong>${plan.dropoffStop.name} ➔ ${plan.dest.name}</strong>
                 </div>
               </div>
             </div>
 
             <div class="result-actions mt-3">
-              <button class="btn-primary" onclick="window.IguazuApp.viewLineOnMap('${plan.line.id}')">
+              <a href="#mapa" class="btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
                 <i class="bi bi-geo-alt-fill"></i> ${window.I18n.getText("planner_view_map_btn")}
-              </button>
+              </a>
               <button class="btn-secondary" onclick="window.IguazuApp.openLineDetail('${plan.line.id}')">
-                <i class="bi bi-clock-history"></i> ${window.I18n.getText("line_view_details")}
+                <i class="bi bi-info-circle"></i> ${window.I18n.getText("line_view_details")}
               </button>
             </div>
           </div>
         </div>
       `;
-    } else {
+    } else if (!plan.isDirect && plan.firstLeg && plan.secondLeg) {
       resultsContainer.innerHTML = `
         <div class="planner-result-card animate-fade-in">
           <div class="result-header bg-slate-800">
             <span class="result-badge"><i class="bi bi-shuffle"></i> Viaje con Transbordo Recomendado</span>
-            <h3>${plan.firstLine.number} ➔ ${plan.secondLine.number}</h3>
+            <h3>${plan.firstLeg.line.number} ➔ ${plan.secondLeg.line.number}</h3>
           </div>
           <div class="result-body">
             <div class="result-stat-row">
@@ -591,30 +638,46 @@ class IguazuTransportApp {
                 <small>${window.I18n.getText("planner_estimated_time")}</small>
                 <strong>${plan.estimatedTime}</strong>
               </div>
+              <div class="stat-box">
+                <i class="bi bi-signpost-split text-blue"></i>
+                <small>Distancia Total</small>
+                <strong>${plan.totalDistanceKm.toFixed(1)} km</strong>
+              </div>
+              <div class="stat-box">
+                <i class="bi bi-ticket-perforated-fill text-amber"></i>
+                <small>Tarifa Total</small>
+                <strong style="font-size:0.8rem; color:var(--text-muted);">${infoNotAvailable}</strong>
+              </div>
             </div>
 
             <div class="journey-timeline">
               <div class="journey-point start">
                 <div class="point-circle"></div>
                 <div class="point-info">
-                  <span class="point-label">Tramo 1: Subir en</span>
-                  <strong>${plan.boardingPoint}</strong> (Tomar ${plan.firstLine.name})
+                  <span class="point-label">Tramo 1 (${plan.firstLeg.line.number})</span>
+                  <strong>Subir en: ${plan.firstLeg.boardingStop.name}</strong> (Tomar ${plan.firstLeg.line.name})
                 </div>
               </div>
               <div class="journey-point transfer">
                 <div class="point-circle"></div>
                 <div class="point-info">
-                  <span class="point-label">Transbordo en</span>
-                  <strong>${plan.transferPoint}</strong> (Cambiar a ${plan.secondLine.name})
+                  <span class="point-label">Transbordo</span>
+                  <strong>${plan.transferPoint}</strong> (Cambiar a ${plan.secondLeg.line.name})
                 </div>
               </div>
               <div class="journey-point end">
                 <div class="point-circle"></div>
                 <div class="point-info">
-                  <span class="point-label">Llegada a</span>
-                  <strong>${plan.dropoffPoint}</strong>
+                  <span class="point-label">Llegada (${plan.secondLeg.line.number})</span>
+                  <strong>${plan.dest.name}</strong>
                 </div>
               </div>
+            </div>
+
+            <div class="result-actions mt-3">
+              <a href="#mapa" class="btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+                <i class="bi bi-geo-alt-fill"></i> ${window.I18n.getText("planner_view_map_btn")}
+              </a>
             </div>
           </div>
         </div>
@@ -622,24 +685,126 @@ class IguazuTransportApp {
     }
   }
 
-  startLiveCountdownEngine() {
-    // Actualizar cada 30 segundos
-    this.countdownTimer = setInterval(() => {
-      this.renderLinesGrid();
-      if (this.selectedLine) {
-        this.renderModalSchedules();
-        this.renderModalLive();
+  toggleDrawer(forceState) {
+    const drawer = document.getElementById("mobile-drawer");
+    const overlay = document.getElementById("drawer-overlay");
+    const hamburger = document.getElementById("hamburger-btn");
+    if (!drawer || !overlay) return;
+
+    const isOpen = (typeof forceState === "boolean") ? forceState : !drawer.classList.contains("open");
+
+    if (isOpen) {
+      drawer.classList.add("open");
+      overlay.classList.add("open");
+      if (hamburger) {
+        hamburger.classList.add("active");
+        hamburger.setAttribute("aria-expanded", "true");
       }
-    }, 30000);
+      document.body.classList.add("drawer-open");
+    } else {
+      drawer.classList.remove("open");
+      overlay.classList.remove("open");
+      if (hamburger) {
+        hamburger.classList.remove("active");
+        hamburger.setAttribute("aria-expanded", "false");
+      }
+      document.body.classList.remove("drawer-open");
+    }
+  }
+
+  closeDrawer() {
+    this.toggleDrawer(false);
   }
 
   setupEventListeners() {
-    // Selector de Idiomas
+    // Selector de Idiomas (Dropdown Compacto en Header)
+    const langDropdown = document.getElementById("lang-dropdown");
+    const langDropdownBtn = document.getElementById("lang-dropdown-btn");
+
+    if (langDropdownBtn && langDropdown) {
+      langDropdownBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isExpanded = langDropdown.classList.toggle("open");
+        langDropdownBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+      });
+    }
+
+    // Opciones del Dropdown de Idiomas
+    document.querySelectorAll(".lang-option").forEach(opt => {
+      opt.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const lang = opt.getAttribute("data-lang");
+        window.I18n.setLanguage(lang);
+        if (langDropdown) {
+          langDropdown.classList.remove("open");
+          if (langDropdownBtn) langDropdownBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+    });
+
+    // Opciones de Idioma en el Drawer Móvil
+    document.querySelectorAll(".drawer-lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const lang = btn.getAttribute("data-lang");
+        window.I18n.setLanguage(lang);
+      });
+    });
+
+    // Compatibilidad con botones legacy .lang-btn
     document.querySelectorAll(".lang-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const lang = btn.getAttribute("data-lang");
         window.I18n.setLanguage(lang);
       });
+    });
+
+    // Clic fuera del Dropdown para cerrarlo
+    document.addEventListener("click", (e) => {
+      if (langDropdown && !langDropdown.contains(e.target)) {
+        langDropdown.classList.remove("open");
+        if (langDropdownBtn) langDropdownBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Menú Hamburguesa y Drawer Móvil
+    const hamburgerBtn = document.getElementById("hamburger-btn");
+    const drawerCloseBtn = document.getElementById("drawer-close-btn");
+    const drawerOverlay = document.getElementById("drawer-overlay");
+
+    if (hamburgerBtn) {
+      hamburgerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleDrawer();
+      });
+    }
+
+    if (drawerCloseBtn) {
+      drawerCloseBtn.addEventListener("click", () => this.closeDrawer());
+    }
+
+    if (drawerOverlay) {
+      drawerOverlay.addEventListener("click", () => this.closeDrawer());
+    }
+
+    // Cerrar drawer al hacer clic en un enlace de navegación
+    document.querySelectorAll(".drawer-nav-link").forEach(link => {
+      link.addEventListener("click", () => {
+        document.querySelectorAll(".drawer-nav-link").forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+        this.closeDrawer();
+      });
+    });
+
+    // Cerrar modales y dropdowns con tecla Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (langDropdown) {
+          langDropdown.classList.remove("open");
+          if (langDropdownBtn) langDropdownBtn.setAttribute("aria-expanded", "false");
+        }
+        this.closeDrawer();
+        this.closeModal();
+      }
     });
 
     window.addEventListener("languageChanged", () => {
@@ -651,6 +816,7 @@ class IguazuTransportApp {
       this.renderFaqs();
       this.renderMapSelectOptions();
       this.updateCompanyStatus();
+      this.updateDataMeta();
       if (this.selectedLine) {
         this.openLineDetail(this.selectedLine.id);
       }
@@ -666,6 +832,22 @@ class IguazuTransportApp {
     const planBtn = document.getElementById("btn-plan-trip");
     if (planBtn) {
       planBtn.addEventListener("click", () => this.executeTripPlan());
+    }
+
+    // Botón GPS del Planificador
+    const planGpsBtn = document.getElementById("btn-planner-gps");
+    if (planGpsBtn) {
+      planGpsBtn.addEventListener("click", () => {
+        if (window.IguazuMap) {
+          window.IguazuMap.locateUser((coords) => {
+            const originInput = document.getElementById("planner-origin-input");
+            const mapOrigin = document.getElementById("map-origin-input");
+            const userLabel = window.I18n ? window.I18n.getText("map_legend_user") : "Mi Ubicación Actual (GPS)";
+            if (originInput) originInput.value = userLabel;
+            if (mapOrigin) mapOrigin.value = userLabel;
+          });
+        }
+      });
     }
 
     // Invertir origen y destino

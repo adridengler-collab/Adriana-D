@@ -1,8 +1,41 @@
 /**
  * Base de Datos Integral del Transporte Urbano de Puerto Iguazú - Empresa Río Uruguay
+ *
+ * NOTA DE GESTIÓN DE DATOS:
+ * - Recorridos, paradas, coordenadas y líneas están confirmados según la red existente.
+ * - Tarifas, frecuencias, horarios fijos y medios de pago están en estado PENDIENTE DE CONFIRMACIÓN OFICIAL
+ *   hasta realizar la entrevista presencial en la sucursal de Río Uruguay Iguazú.
+ * - La fecha de actualización se centraliza en TRANSPORT_DATA.meta.lastUpdated.
  */
 
 const TRANSPORT_DATA = {
+  // Metadatos y control de actualización centralizada
+  meta: {
+    // Si es null, el sistema mostrará automáticamente "Datos oficiales: pendientes de confirmación".
+    // Cuando obtengas los datos oficiales tras la entrevista, asignar la fecha (ej: "septiembre de 2026"),
+    // y el sistema mostrará automáticamente "Última actualización de datos: septiembre de 2026".
+    lastUpdated: null,
+    status: "pending_confirmation",
+    pendingStatusText: {
+      es: "Datos oficiales: pendientes de confirmación",
+      en: "Official data: pending confirmation",
+      pt: "Dados oficiais: pendentes de confirmação",
+      fr: "Données officielles : en attente de confirmation"
+    },
+    lastUpdatedPrefix: {
+      es: "Última actualización de datos:",
+      en: "Data last updated:",
+      pt: "Última atualização de dados:",
+      fr: "Dernière mise à jour des données :"
+    },
+    noticePendingOfficial: {
+      es: "Información de tarifas y horarios pendiente de confirmación oficial.",
+      en: "Fares and timetables information pending official confirmation.",
+      pt: "Informações de tarifas e horários pendentes de confirmação oficial.",
+      fr: "Informations sur les tarifs et horaires en attente de confirmation officielle."
+    }
+  },
+
   company: {
     name: "Río Uruguay - Transporte Urbano Iguazú",
     shortName: "Río Uruguay",
@@ -12,9 +45,10 @@ const TRANSPORT_DATA = {
     address: "Terminal de Ómnibus, Av. Córdoba y Av. Misiones, Local 4, Puerto Iguazú",
     operationalStatus: "NORMAL", // NORMAL | DELAY | DETOUR
     statusMessage: {
-      es: "Todos los servicios urbanos y turísticos operan con frecuencia normal.",
-      en: "All urban and tourist bus services are operating on regular schedule.",
-      pt: "Todos os serviços urbanos e turísticos estão operando em horário normal."
+      es: "Servicios urbanos y turísticos en circulación. Tarifas y horarios en proceso de actualización oficial.",
+      en: "Urban and tourist bus services operating. Fares and timetables under official update.",
+      pt: "Serviços urbanos e turísticos em operação. Tarifas e horários em processo de atualização oficial.",
+      fr: "Services urbains et touristiques en circulation. Tarifs et horaires en cours de mise à jour officielle."
     }
   },
 
@@ -30,23 +64,22 @@ const TRANSPORT_DATA = {
   categories: [
     { id: "all", labelKey: "cat_all", icon: "bi-grid-fill" },
     { id: "tourist", labelKey: "cat_tourist", icon: "bi-camera-fill" },
-    { id: "urban", labelKey: "cat_urban", icon: "bi-building" },
     { id: "international", labelKey: "cat_international", icon: "bi-globe-americas" }
   ],
 
-  // Destinos turísticos clave para búsqueda rápida
+  // Destinos turísticos clave para búsqueda rápida (Coordenadas y paradas reales)
   touristSpots: [
-    { id: "cataratas", name: "Cataratas Argentinas (Parque Nacional)", lineId: "line-cataratas", icon: "water" },
-    { id: "hito", name: "Hito Tres Fronteras & Costanera", lineId: "line-hito", icon: "compass" },
-    { id: "aeropuerto", name: "Aeropuerto Int. Cataratas (IGR)", lineId: "line-aeropuerto", icon: "airplane" },
-    { id: "hoteles600", name: "Selva Yriapú (600 Hectáreas Hoteles)", lineId: "line-600", icon: "tree" },
-    { id: "aripuca", name: "La Aripuca & Güirá Oga", lineId: "line-cataratas", icon: "binoculars" },
-    { id: "dutyfree", name: "Duty Free Shop / Aduana Argentina", lineId: "line-internacional-br", icon: "bag" },
-    { id: "foz", name: "Foz do Iguaçu (Brasil / TTU)", lineId: "line-internacional-br", icon: "globe" },
-    { id: "cde", name: "Ciudad del Este (Paraguay / CDE)", lineId: "line-internacional-py", icon: "shop" }
+    { id: "cataratas", name: "Cataratas Argentinas (Parque Nacional)", lineId: "line-cataratas", icon: "water", lat: -25.6705, lng: -54.4502 },
+    { id: "hito", name: "Hito Tres Fronteras & Costanera", lineId: "line-hito", icon: "compass", lat: -25.5898, lng: -54.5935 },
+    { id: "aeropuerto", name: "Aeropuerto Int. Cataratas (IGR)", lineId: "line-aeropuerto", icon: "airplane", lat: -25.7380, lng: -54.4735 },
+    { id: "hoteles600", name: "Selva Yriapú (600 Hectáreas Hoteles)", lineId: "line-600", icon: "tree", lat: -25.6185, lng: -54.5610 },
+    { id: "aripuca", name: "La Aripuca & Güirá Oga", lineId: "line-cataratas", icon: "binoculars", lat: -25.6190, lng: -54.5420 },
+    { id: "dutyfree", name: "Duty Free Shop / Aduana Argentina", lineId: "line-internacional-br", icon: "bag", lat: -25.6085, lng: -54.5490 },
+    { id: "foz", name: "Foz do Iguaçu (Brasil / TTU)", lineId: "line-internacional-br", icon: "globe", lat: -25.5410, lng: -54.5860 },
+    { id: "cde", name: "Ciudad del Este (Paraguay / CDE)", lineId: "line-internacional-py", icon: "shop", lat: -25.5120, lng: -54.6130 }
   ],
 
-  // Líneas de Colectivos
+  // Líneas de Colectivos (Recorridos y paradas reales preservados; tarifas/horarios/frecuencias pendientes)
   lines: [
     {
       id: "line-cataratas",
@@ -54,21 +87,15 @@ const TRANSPORT_DATA = {
       name: "Línea Cataratas (Parque Nacional)",
       badgeColor: "#059669", // Emerald Green
       type: "tourist",
-      frequency: {
-        weekday: "Cada 20 min",
-        saturday: "Cada 20 min",
-        sunday: "Cada 20 min"
-      },
-      firstBus: "07:00",
-      lastBus: "19:40",
-      price: {
-        tourist: 5000,
-        resident: 1500
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Servicio directo al Parque Nacional Iguazú (Portal de acceso a Cataratas) pasando por atractivos sobre RN 12.",
         en: "Direct service to Iguazú National Park (Falls entrance) stopping at RN 12 attractions.",
-        pt: "Serviço direto ao Parque Nacional do Iguaçu (entrada das Cataratas) passando por atrações na RN 12."
+        pt: "Serviço direto ao Parque Nacional do Iguaçu (entrada das Cataratas) passando por atrações na RN 12.",
+        fr: "Service direct vers le Parc National d'Iguazú (Entrée des Chutes) avec arrêts sur la RN 12."
       },
       routeIda: [
         { name: "Terminal de Ómnibus (Plataforma 7)", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -89,18 +116,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus Puerto Iguazú", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "07:00", "07:20", "07:40", "08:00", "08:20", "08:40", "09:00", "09:20", "09:40",
-          "10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00", "12:20", "12:40",
-          "13:00", "13:20", "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40",
-          "16:00", "16:20", "16:40", "17:00", "17:20", "17:40", "18:00", "18:30", "19:00"
-        ],
-        vuelta: [
-          "07:50", "08:10", "08:30", "08:50", "09:10", "09:30", "09:50", "10:10", "10:30",
-          "10:50", "11:10", "11:30", "11:50", "12:10", "12:30", "12:50", "13:10", "13:30",
-          "13:50", "14:10", "14:30", "14:50", "15:10", "15:30", "15:50", "16:10", "16:30",
-          "16:50", "17:10", "17:30", "17:50", "18:10", "18:30", "19:00", "19:30", "20:00"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -110,21 +127,15 @@ const TRANSPORT_DATA = {
       name: "Línea Hito Tres Fronteras & Costanera",
       badgeColor: "#0284c7", // Sky Blue
       type: "tourist",
-      frequency: {
-        weekday: "Cada 30 min",
-        saturday: "Cada 30 min",
-        sunday: "Cada 40 min"
-      },
-      firstBus: "06:30",
-      lastBus: "22:00",
-      price: {
-        tourist: 1800,
-        resident: 900
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Conecta la Terminal con la zona céntrica, la bella Costanera Eduardo Arrabal y el mirador del Hito Tres Fronteras.",
         en: "Connects the Bus Station with Downtown, the Eduardo Arrabal Waterfront, and the Three Borders Landmark.",
-        pt: "Conecta a Rodoviária com o Centro, a Orla Eduardo Arrabal e o Marco das Três Fronteiras."
+        pt: "Conecta a Rodoviária com o Centro, a Orla Eduardo Arrabal e o Marco das Três Fronteiras.",
+        fr: "Relie la Gare Routière au Centre-ville, à la promenade Eduardo Arrabal et au point de vue de la Borne des 3 Frontières."
       },
       routeIda: [
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -142,18 +153,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00",
-          "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00",
-          "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00",
-          "18:30", "19:00", "19:30", "20:00", "20:45", "21:30", "22:15"
-        ],
-        vuelta: [
-          "06:50", "07:20", "07:50", "08:20", "08:50", "09:20", "09:50", "10:20",
-          "10:50", "11:20", "11:50", "12:20", "12:50", "13:20", "13:50", "14:20",
-          "14:50", "15:20", "15:50", "16:20", "16:50", "17:20", "17:50", "18:20",
-          "18:50", "19:20", "19:50", "20:20", "21:05", "21:50", "22:35"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -163,21 +164,15 @@ const TRANSPORT_DATA = {
       name: "Línea Aeropuerto Internacional (IGR)",
       badgeColor: "#d97706", // Amber
       type: "tourist",
-      frequency: {
-        weekday: "Sincronizado con vuelos (cada 45-60 min)",
-        saturday: "Sincronizado con vuelos",
-        sunday: "Sincronizado con vuelos"
-      },
-      firstBus: "06:00",
-      lastBus: "21:30",
-      price: {
-        tourist: 4500,
-        resident: 1800
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
-        es: "Enlace rápido entre el Centro / Terminal de Ómnibus y el Aeropuerto Mayor Carlos Krause (IGR).",
-        en: "Fast transit between Bus Terminal / Downtown and Cataratas Int. Airport (IGR).",
-        pt: "Transporte rápido entre o Centro / Rodoviária e o Aeroporto Internacional (IGR)."
+        es: "Enlace entre el Centro / Terminal de Ómnibus y el Aeropuerto Mayor Carlos Krause (IGR).",
+        en: "Transit between Bus Terminal / Downtown and Cataratas Int. Airport (IGR).",
+        pt: "Transporte entre o Centro / Rodoviária e o Aeroporto Internacional (IGR).",
+        fr: "Liaison entre le Centre / Gare Routière et l'Aéroport International Carlos Krause (IGR)."
       },
       routeIda: [
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -195,14 +190,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "06:00", "07:15", "08:30", "09:45", "11:00", "12:15",
-          "13:30", "14:45", "16:00", "17:15", "18:30", "20:00", "21:30"
-        ],
-        vuelta: [
-          "07:00", "08:15", "09:30", "10:45", "12:00", "13:15",
-          "14:30", "15:45", "17:00", "18:15", "19:30", "21:00", "22:30"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -212,21 +201,15 @@ const TRANSPORT_DATA = {
       name: "Línea 600 Hectáreas (Selva Yriapú)",
       badgeColor: "#16a34a", // Forest Green
       type: "tourist",
-      frequency: {
-        weekday: "Cada 40 min",
-        saturday: "Cada 45 min",
-        sunday: "Cada 60 min"
-      },
-      firstBus: "06:15",
-      lastBus: "21:15",
-      price: {
-        tourist: 2000,
-        resident: 900
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Acceso a la reserva Selva Yriapú, principales eco-lodges, resorts y a las comunidades Guaraníes (Fortín M'Bororé).",
         en: "Access to Yriapú Rainforest Reserve, eco-lodges, resorts, and Guaraní Indigenous communities.",
-        pt: "Acesso à reserva Selva Yriapú, eco-lodges, resorts e comunidades indígenas Guaranis."
+        pt: "Acesso à reserva Selva Yriapú, eco-lodges, resorts e comunidades indígenas Guaranis.",
+        fr: "Accès à la réserve Forêt Yriapú, aux éco-lodges, resorts et communautés autochtones Guaranis."
       },
       routeIda: [
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -245,16 +228,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "06:15", "07:00", "07:45", "08:30", "09:15", "10:00", "10:45", "11:30",
-          "12:15", "13:00", "13:45", "14:30", "15:15", "16:00", "16:45", "17:30",
-          "18:15", "19:00", "19:45", "20:30", "21:15"
-        ],
-        vuelta: [
-          "06:45", "07:30", "08:15", "09:00", "09:45", "10:30", "11:15", "12:00",
-          "12:45", "13:30", "14:15", "15:00", "15:45", "16:30", "17:15", "18:00",
-          "18:45", "19:30", "20:15", "21:00", "21:45"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -264,21 +239,15 @@ const TRANSPORT_DATA = {
       name: "Urbano 1: Terminal - B° 1° de Mayo - Belén - SAMIC",
       badgeColor: "#7c3aed", // Purple
       type: "urban",
-      frequency: {
-        weekday: "Cada 25 min",
-        saturday: "Cada 35 min",
-        sunday: "Cada 50 min"
-      },
-      firstBus: "05:30",
-      lastBus: "23:00",
-      price: {
-        tourist: 900,
-        resident: 900
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Conecta la Terminal con el Hospital SAMIC, colegios, Barrio 1° de Mayo, B° Belén y B° Bicentenario.",
         en: "Connects Bus Station with SAMIC Public Hospital, schools, and residential neighborhoods.",
-        pt: "Liga a Rodoviária ao Hospital SAMIC, escolas e bairros residenciais 1° de Mayo e Belén."
+        pt: "Liga a Rodoviária ao Hospital SAMIC, escolas e bairros residenciais 1° de Mayo e Belén.",
+        fr: "Relie la Gare Routière à l'Hôpital SAMIC, aux écoles et aux quartiers résidentiels 1° de Mayo et Belén."
       },
       routeIda: [
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -297,20 +266,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "05:30", "06:00", "06:25", "06:50", "07:15", "07:40", "08:05", "08:30",
-          "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
-          "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
-          "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:45",
-          "21:30", "22:15", "23:00"
-        ],
-        vuelta: [
-          "05:55", "06:25", "06:50", "07:15", "07:40", "08:05", "08:30", "08:55",
-          "09:25", "09:55", "10:25", "10:55", "11:25", "11:55", "12:25", "12:55",
-          "13:25", "13:55", "14:25", "14:55", "15:25", "15:55", "16:25", "16:55",
-          "17:25", "17:55", "18:25", "18:55", "19:25", "19:55", "20:25", "21:10",
-          "21:55", "22:40", "23:25"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -320,21 +277,15 @@ const TRANSPORT_DATA = {
       name: "Urbano 2: Terminal - B° 2000 - Santa Rosa - Rivera",
       badgeColor: "#ea580c", // Orange
       type: "urban",
-      frequency: {
-        weekday: "Cada 30 min",
-        saturday: "Cada 40 min",
-        sunday: "Cada 60 min"
-      },
-      firstBus: "05:45",
-      lastBus: "22:30",
-      price: {
-        tourist: 900,
-        resident: 900
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Servicio urbano transversal hacia Barrio 2000, Barrio Santa Rosa, zona Rivera del Paraná y complejo educativo.",
         en: "Urban loop serving Barrio 2000, Santa Rosa, Paraná River area, and educational zone.",
-        pt: "Serviço urbano transversal aos bairros 2000, Santa Rosa e orla do Rio Paraná."
+        pt: "Serviço urbano transversal aos bairros 2000, Santa Rosa e orla do Rio Paraná.",
+        fr: "Ligne urbaine transversale desservant les quartiers 2000, Santa Rosa, les rives du Paraná et la zone éducative."
       },
       routeIda: [
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -351,16 +302,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal de Ómnibus", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "05:45", "06:15", "06:45", "07:15", "07:45", "08:15", "08:45", "09:15",
-          "10:00", "10:45", "11:30", "12:15", "13:00", "13:45", "14:30", "15:15",
-          "16:00", "16:45", "17:30", "18:15", "19:00", "19:45", "20:30", "21:30", "22:30"
-        ],
-        vuelta: [
-          "06:10", "06:40", "07:10", "07:40", "08:10", "08:40", "09:10", "09:40",
-          "10:25", "11:10", "11:55", "12:40", "13:25", "14:10", "14:55", "15:40",
-          "16:25", "17:10", "17:55", "18:40", "19:25", "20:10", "20:55", "21:55", "22:55"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -370,21 +313,15 @@ const TRANSPORT_DATA = {
       name: "Internacional: Puerto Iguazú ⇆ Foz do Iguaçu (Brasil 🇧🇷)",
       badgeColor: "#2563eb", // Royal Blue
       type: "international",
-      frequency: {
-        weekday: "Cada 30-40 min",
-        saturday: "Cada 40 min",
-        sunday: "Cada 50 min"
-      },
-      firstBus: "06:30",
-      lastBus: "20:00",
-      price: {
-        tourist: 3000,
-        resident: 3000
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
         es: "Cruce internacional por el Puente Tancredo Neves. Pasa por Aduana Argentina, Duty Free Shop, Aduana Brasileña y llega a la Terminal TTU de Foz do Iguaçu.",
         en: "International bus crossing Tancredo Neves Bridge via Argentina Customs, Duty Free Shop, Brazil Customs to TTU Urban Terminal in Foz do Iguaçu.",
-        pt: "Linha internacional cruzando a Ponte Tancredo Neves pela Aduana Argentina, Duty Free e Aduana Brasileira até o Terminal TTU em Foz do Iguaçu."
+        pt: "Linha internacional cruzando a Ponte Tancredo Neves pela Aduana Argentina, Duty Free e Aduana Brasileira até o Terminal TTU em Foz do Iguaçu.",
+        fr: "Ligne internationale traversant le Pont Tancredo Neves via les douanes d'Argentine et du Brésil jusqu'au Terminal TTU à Foz do Iguaçu."
       },
       routeIda: [
         { name: "Terminal de Ómnibus Puerto Iguazú (Plat. Internacional)", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -406,16 +343,8 @@ const TRANSPORT_DATA = {
         { name: "Terminal Puerto Iguazú", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "06:30", "07:10", "07:50", "08:30", "09:10", "09:50", "10:30", "11:10",
-          "11:50", "12:30", "13:10", "13:50", "14:30", "15:10", "15:50", "16:30",
-          "17:10", "17:50", "18:30", "19:15", "20:00"
-        ],
-        vuelta: [
-          "07:30", "08:10", "08:50", "09:30", "10:10", "10:50", "11:30", "12:10",
-          "12:50", "13:30", "14:10", "14:50", "15:30", "16:10", "16:50", "17:30",
-          "18:10", "18:50", "19:30", "20:15", "21:00"
-        ]
+        ida: [],
+        vuelta: []
       }
     },
 
@@ -425,21 +354,15 @@ const TRANSPORT_DATA = {
       name: "Internacional: Puerto Iguazú ⇆ Ciudad del Este (Paraguay 🇵🇾)",
       badgeColor: "#0284c7", // Sky Blue
       type: "international",
-      frequency: {
-        weekday: "Cada 40-50 min",
-        saturday: "Cada 50 min",
-        sunday: "Cada 60 min"
-      },
-      firstBus: "06:00",
-      lastBus: "19:00",
-      price: {
-        tourist: 4000,
-        resident: 4000
-      },
+      frequency: null,
+      firstBus: null,
+      lastBus: null,
+      price: null,
       description: {
-        es: "Servicio internacional directo a Paraguay. Cruza por Foz do Iguaçu (Brasil), atraviesa el Puente de la Amistad (Ponte da Amizade) y llega a Ciudad del Este (Terminal y Microcentro comercial).",
-        en: "Direct international service to Paraguay crossing through Foz do Iguaçu (Brazil), over the Friendship Bridge into Ciudad del Este (Downtown & Bus Terminal).",
-        pt: "Serviço internacional direto ao Paraguai passando por Foz do Iguaçu, cruzando a Ponte da Amizade até Ciudad del Este."
+        es: "Servicio internacional a Paraguay cruzando por Foz do Iguaçu (Brasil) y el Puente de la Amistad hasta Ciudad del Este.",
+        en: "International service to Paraguay crossing through Foz do Iguaçu (Brazil) and Friendship Bridge to Ciudad del Este.",
+        pt: "Serviço internacional ao Paraguai passando por Foz do Iguaçu e Ponte da Amizade até Ciudad del Este.",
+        fr: "Service international vers le Paraguay via Foz do Iguaçu et le Pont de l'Amitié jusqu'à Ciudad del Este."
       },
       routeIda: [
         { name: "Terminal de Ómnibus Puerto Iguazú (Plat. Internacional)", lat: -25.5991, lng: -54.5732, isMajor: true },
@@ -463,133 +386,101 @@ const TRANSPORT_DATA = {
         { name: "Terminal Puerto Iguazú", lat: -25.5991, lng: -54.5732, isMajor: true }
       ],
       schedule: {
-        ida: [
-          "06:00", "06:45", "07:30", "08:15", "09:00", "09:45", "10:30", "11:15",
-          "12:00", "12:45", "13:30", "14:15", "15:00", "15:45", "16:30", "17:15",
-          "18:00", "19:00"
-        ],
-        vuelta: [
-          "07:15", "08:00", "08:45", "09:30", "10:15", "11:00", "11:45", "12:30",
-          "13:15", "14:00", "14:45", "15:30", "16:15", "17:00", "17:45", "18:30",
-          "19:15", "20:15"
-        ]
+        ida: [],
+        vuelta: []
       }
     }
   ],
 
-  // Tarifas Oficiales
+  // Estructura de Tarifas (Precios sin inventar; marcados como pendientes de confirmación oficial)
   fares: [
     {
       categoryKey: "fare_cataratas",
-      priceARS: 5000,
-      priceBRL: 25,
-      priceUSD: 5,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_cataratas_desc",
       validFor: ["L-CAT"]
     },
     {
       categoryKey: "fare_airport",
-      priceARS: 4500,
-      priceBRL: 22,
-      priceUSD: 4.5,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_airport_desc",
       validFor: ["L-AEROPUERTO"]
     },
     {
       categoryKey: "fare_international",
-      priceARS: 3000,
-      priceBRL: 15,
-      priceUSD: 3,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_international_desc",
       validFor: ["L-INT BR"]
     },
     {
       categoryKey: "fare_international_py",
-      priceARS: 4000,
-      priceBRL: 20,
-      priceUSD: 4,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_international_py_desc",
       validFor: ["L-INT PY"]
     },
     {
       categoryKey: "fare_tourist_hito",
-      priceARS: 1800,
-      priceBRL: 9,
-      priceUSD: 2,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_tourist_hito_desc",
       validFor: ["L-HITO", "L-600"]
     },
     {
       categoryKey: "fare_urban_general",
-      priceARS: 900,
-      priceBRL: 5,
-      priceUSD: 1,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_urban_general_desc",
       validFor: ["Línea 1", "Línea 2", "L-HITO (Residente)", "L-600 (Residente)"]
     },
     {
       categoryKey: "fare_student_beeg",
-      priceARS: 0,
-      priceBRL: 0,
-      priceUSD: 0,
+      priceARS: null,
+      priceBRL: null,
+      priceUSD: null,
       descriptionKey: "fare_student_beeg_desc",
       validFor: ["Línea 1", "Línea 2", "L-HITO", "L-600"]
     }
   ],
 
-  // Medios de Pago
+  // Medios de Pago (Estructura lista para incorporar los métodos oficiales tras la entrevista)
   paymentMethods: [
     {
-      id: "cash",
-      icon: "bi-cash-coin",
-      titleKey: "pay_cash_title",
-      descKey: "pay_cash_desc"
-    },
-    {
-      id: "card_rio",
-      icon: "bi-credit-card-2-front-fill",
-      titleKey: "pay_card_title",
-      descKey: "pay_card_desc"
-    },
-    {
-      id: "qr",
-      icon: "bi-qr-code-scan",
-      titleKey: "pay_qr_title",
-      descKey: "pay_qr_desc"
-    },
-    {
-      id: "sube",
-      icon: "bi-credit-card-fill",
-      titleKey: "pay_sube_title",
-      descKey: "pay_sube_desc"
+      id: "pending_notice",
+      icon: "bi-clock-history",
+      titleKey: "pay_pending_title",
+      descKey: "pay_pending_desc"
     }
   ],
 
-  // Puntos de venta / recarga
+  // Puntos de venta / boleterías
   salePoints: [
     {
       name: "Boletería Río Uruguay - Terminal Central",
       address: "Av. Córdoba y Av. Misiones (Local 4)",
       hours: "Todos los días 06:00 a 22:30 hs",
-      services: "Venta pasajes Cataratas/Aeropuerto, recarga tarjeta, informes"
+      services: "Venta pasajes, información sobre tarifas y recorridos"
     },
     {
       name: "Puesto de Atención Hito Tres Fronteras",
       address: "Plaza Hito Tres Fronteras (Kiosco Turístico)",
       hours: "Martes a Domingo 09:00 a 20:00 hs",
-      services: "Venta de boletos turísticos y consultas"
-    },
-    {
-      name: "Kiosco Central Plaza San Martín",
-      address: "Av. Brasil 120 (Frente a la Plaza)",
-      hours: "Lunes a Sábados 07:30 a 21:00 hs",
-      services: "Recarga de saldo y compra de tarjeta local"
+      services: "Información turística y consultas"
     },
     {
       name: "Boletería Portal Parque Nacional Cataratas",
       address: "Acceso Parque Nacional Iguazú",
       hours: "Todos los días 07:30 a 18:30 hs",
-      services: "Boletos de regreso a la Terminal y Centro"
+      services: "Consultas de regreso a Terminal y Centro"
     }
   ],
 
@@ -597,24 +488,24 @@ const TRANSPORT_DATA = {
   news: [
     {
       id: 1,
-      date: "2026-08-25",
-      badge: "AVISO IMPORTANTE",
+      date: "2026-09-10",
+      badge: "INFORMACIÓN OFICIAL",
       badgeType: "warning",
       titleKey: "news_title_1",
       contentKey: "news_body_1"
     },
     {
       id: 2,
-      date: "2026-08-20",
-      badge: "HORARIO ESPECIAL",
+      date: "2026-09-08",
+      badge: "AVISO OPERATIVO",
       badgeType: "info",
       titleKey: "news_title_2",
       contentKey: "news_body_2"
     },
     {
       id: 3,
-      date: "2026-08-15",
-      badge: "SERVICIO INTERNACIONAL",
+      date: "2026-09-05",
+      badge: "PASO INTERNACIONAL",
       badgeType: "success",
       titleKey: "news_title_3",
       contentKey: "news_body_3"
