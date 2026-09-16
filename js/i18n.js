@@ -200,7 +200,7 @@ const TRANSLATIONS = {
     contact_address: "Boletería Principal:",
     contact_hours: "Atención todos los días de 06:00 a 22:30 hs",
     contact_btn_whatsapp: "Chatear por WhatsApp",
-    footer_rights: "Todos los derechos reservados. Portal informativo de transporte público para Puerto Iguazú.",
+    footer_rights: "© 2026 Rumbo Urbano. Proyecto desarrollado por Adriana Dengler.",
     footer_quick_links: "Accesos Rápidos"
   },
 
@@ -400,7 +400,7 @@ const TRANSLATIONS = {
     contact_address: "Main Ticket Office:",
     contact_hours: "Open daily from 06:00 AM to 10:30 PM",
     contact_btn_whatsapp: "Chat on WhatsApp",
-    footer_rights: "All rights reserved. Informational public transport guide for Puerto Iguazú.",
+    footer_rights: "© 2026 Rumbo Urbano. Project developed by Adriana Dengler.",
     footer_quick_links: "Quick Links"
   },
 
@@ -600,7 +600,7 @@ const TRANSLATIONS = {
     contact_address: "Bilheteria Principal:",
     contact_hours: "Atendimento todos os dias das 06h00 às 22h30",
     contact_btn_whatsapp: "Conversar no WhatsApp",
-    footer_rights: "Todos os direitos reservados. Portal informativo de transporte público para Puerto Iguazú.",
+    footer_rights: "© 2026 Rumbo Urbano. Projeto desenvolvido por Adriana Dengler.",
     footer_quick_links: "Links Rápidos"
   },
 
@@ -801,7 +801,7 @@ const TRANSLATIONS = {
     contact_address: "Guichet Principal :",
     contact_hours: "Ouvert tous les jours de 06h00 à 22h30",
     contact_btn_whatsapp: "Discuter sur WhatsApp",
-    footer_rights: "Tous droits réservés. Guide d'information des transports publics de Puerto Iguazú.",
+    footer_rights: "© 2026 Rumbo Urbano. Projet développé par Adriana Dengler.",
     footer_quick_links: "Accès Rapides"
   }
 };
