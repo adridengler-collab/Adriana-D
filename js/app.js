@@ -768,6 +768,28 @@ class IguazuTransportApp {
 
     // Menú Hamburguesa y Drawer Móvil
     const hamburgerBtn = document.getElementById("hamburger-btn");
+
+      // NAVIGATION DROPDOWN (Desktop) – toggle on click
+      document.querySelectorAll('.nav-dropdown .dropdown-toggle').forEach(toggle => {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.addEventListener('click', e => {
+          e.stopPropagation();
+          const parent = toggle.parentElement;
+          const isOpen = parent.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', isOpen);
+        });
+      });
+
+      // Close any open dropdown when clicking outside
+      document.addEventListener('click', e => {
+        document.querySelectorAll('.nav-dropdown.open').forEach(openDropdown => {
+          if (!openDropdown.contains(e.target)) {
+            openDropdown.classList.remove('open');
+            const toggle = openDropdown.querySelector('.dropdown-toggle');
+            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
     const drawerCloseBtn = document.getElementById("drawer-close-btn");
     const drawerOverlay = document.getElementById("drawer-overlay");
 
