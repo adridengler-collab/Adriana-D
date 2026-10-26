@@ -393,10 +393,12 @@ const TRANSPORT_DATA = {
   ],
 
   // Estructura de Tarifas (Precios sin inventar; marcados como pendientes de confirmación oficial)
+  // Estructura de Tarifas (Precios sin inventar; marcados como pendientes de confirmación oficial)
   fares: [
     {
       categoryKey: "fare_cataratas",
-      priceARS: null,
+      priceARS: 10000, // pendiente de confirmación oficial
+      residentPriceARS: 4000, // pendiente de confirmación oficial (requiere DNI)
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_cataratas_desc",
@@ -404,7 +406,7 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_airport",
-      priceARS: null,
+      priceARS: 8000, // pendiente de confirmación oficial
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_airport_desc",
@@ -412,7 +414,7 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_international",
-      priceARS: null,
+      priceARS: 12000, // pendiente de confirmación oficial
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_international_desc",
@@ -420,23 +422,23 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_international_py",
-      priceARS: null,
+      priceARS: 10000, // pendiente de confirmación oficial
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_international_py_desc",
       validFor: ["L-INT PY"]
     },
     {
-      categoryKey: "fare_tourist_hito",
-      priceARS: null,
+      categoryKey: "fare_urban_general",
+      priceARS: 2800, // pendiente de confirmación oficial
       priceBRL: null,
       priceUSD: null,
-      descriptionKey: "fare_tourist_hito_desc",
-      validFor: ["L-HITO", "L-600"]
+      descriptionKey: "fare_urban_general_desc",
+      validFor: ["Línea 1", "Línea 2", "L-HITO (Residente)", "L-600 (Residente)"]
     },
     {
-      categoryKey: "fare_urban_general",
-      priceARS: null,
+      categoryKey: "fare_urban_card",
+      priceARS: 2200, // pendiente de confirmación oficial
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_urban_general_desc",
@@ -451,6 +453,7 @@ const TRANSPORT_DATA = {
       validFor: ["Línea 1", "Línea 2", "L-HITO", "L-600"]
     }
   ],
+
 
   // Medios de Pago (Estructura lista para incorporar los métodos oficiales tras la entrevista)
   paymentMethods: [

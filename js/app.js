@@ -361,14 +361,26 @@ class IguazuTransportApp {
 
       const pendingCell = `<span class="pending-cell-text">${window.I18n.getText("info_not_available")}</span>`;
 
+      const formatPrice = val => (val !== null && val !== undefined) ? `<span class="price-value">${val.toLocaleString('en-AR')}</span>` : pendingCell;
+
+      const arsCell = formatPrice(fare.priceARS);
+      const brlCell = formatPrice(fare.priceBRL);
+      const usdCell = formatPrice(fare.priceUSD);
+
+      // Resident price for Cataratas (requires DNI copy)
+      let extraDesc = "";
+      if (fare.categoryKey === "fare_cataratas" && fare.residentPriceARS) {
+        extraDesc = `<br/><small class="resident-note">(residente, requiere fotocopia del DNI)</small>`;
+      }
+
       tr.innerHTML = `
         <td>
           <strong>${title}</strong>
-          <small class="table-subdesc">${desc}</small>
+          <small class="table-subdesc">${desc}${extraDesc}</small>
         </td>
-        <td class="price-cell ars">${pendingCell}</td>
-        <td class="price-cell brl">${pendingCell}</td>
-        <td class="price-cell usd">${pendingCell}</td>
+        <td class="price-cell ars">${arsCell}</td>
+        <td class="price-cell brl">${brlCell}</td>
+        <td class="price-cell usd">${usdCell}</td>
         <td>${validBadges}</td>
       `;
       tbody.appendChild(tr);
