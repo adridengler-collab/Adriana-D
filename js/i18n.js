@@ -159,6 +159,11 @@ const TRANSLATIONS = {
     pay_methods_title: "Medios de Pago",
     pay_pending_title: "Medios de pago: Pendiente de confirmación oficial",
     pay_pending_desc: "Los medios de pago vigentes, tarjetas locales y opciones electrónicas se encuentran pendientes de confirmación oficial.",
+    pay_cash_title: "Efectivo",
+    pay_cash_desc: "Pago en efectivo",
+    pay_sube_company_title: "Tarjeta SUBE de la empresa",
+    pay_sube_company_desc: "Tarjeta propia de la empresa; no corresponde al sistema SUBE nacional",
+
 
     // Points of Sale
     points_title: "Boleterías y Puntos de Atención",

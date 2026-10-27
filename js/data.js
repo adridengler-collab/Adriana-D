@@ -458,6 +458,18 @@ const TRANSPORT_DATA = {
   // Medios de Pago (Estructura lista para incorporar los métodos oficiales tras la entrevista)
   paymentMethods: [
     {
+      id: "cash",
+      icon: "bi-cash",
+      titleKey: "pay_cash_title",
+      descKey: "pay_cash_desc"
+    },
+    {
+      id: "sube_company",
+      icon: "bi-card-checklist",
+      titleKey: "pay_sube_company_title",
+      descKey: "pay_sube_company_desc"
+    },
+    {
       id: "pending_notice",
       icon: "bi-clock-history",
       titleKey: "pay_pending_title",

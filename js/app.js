@@ -391,15 +391,22 @@ class IguazuTransportApp {
     const container = document.getElementById("payment-methods-grid");
     if (!container) return;
 
-    container.innerHTML = `
-      <div class="payment-card pending-notice-card">
+    // Clear existing content
+    container.innerHTML = "";
+
+    // Generate a card for each payment method defined in data
+    TRANSPORT_DATA.paymentMethods.forEach(method => {
+      const card = document.createElement("div");
+      card.className = "payment-card";
+      card.innerHTML = `
         <div class="payment-icon-box">
-          <i class="bi bi-clock-history"></i>
+          <i class="${method.icon}"></i>
         </div>
-        <h4 class="payment-title">${window.I18n.getText("pay_pending_title")}</h4>
-        <p class="payment-desc">${window.I18n.getText("pay_pending_desc")}</p>
-      </div>
-    `;
+        <h4 class="payment-title">${window.I18n.getText(method.titleKey)}</h4>
+        <p class="payment-desc">${window.I18n.getText(method.descKey)}</p>
+      `;
+      container.appendChild(card);
+    });
   }
 
   renderSalePoints() {
