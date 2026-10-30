@@ -354,6 +354,10 @@ body.drawer-open {
     --header-height: 64px;
   }
 
+  .header-update-badge {
+    display: none; /* Keep mobile header clean; accessible in mobile drawer */
+  }
+
   .hero-section {
     padding: 40px 0 60px;
   }
@@ -462,7 +466,22 @@ body.drawer-open {
     max-height: 94vh;
   }
 
+  .fares-exchange-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+    gap: 14px;
+  }
+
+  .exchange-inputs-group {
+    justify-content: space-between;
+  }
+
   .modal-live-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cabecera-grid {
     grid-template-columns: 1fr;
   }
 

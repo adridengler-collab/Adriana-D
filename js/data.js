@@ -1,38 +1,22 @@
 /**
  * Base de Datos Integral del Transporte Urbano de Puerto Iguazú - Empresa Río Uruguay
  *
- * NOTA DE GESTIÓN DE DATOS:
- * - Recorridos, paradas, coordenadas y líneas están confirmados según la red existente.
- * - Tarifas, frecuencias, horarios fijos y medios de pago están en estado PENDIENTE DE CONFIRMACIÓN OFICIAL
- *   hasta realizar la entrevista presencial en la sucursal de Río Uruguay Iguazú.
- * - La fecha de actualización se centraliza en TRANSPORT_DATA.meta.lastUpdated.
+ * GESTIÓN DE DATOS:
+ * - Recorridos, paradas, coordenadas y líneas organizadas en Urbanas, Turísticas e Internacionales.
+ * - Tarifas vigentes en ARS con conversión a USD y BRL.
+ * - Última actualización centralizada: 23/10/2026.
  */
 
 const TRANSPORT_DATA = {
   // Metadatos y control de actualización centralizada
   meta: {
-    // Si es null, el sistema mostrará automáticamente "Datos oficiales: pendientes de confirmación".
-    // Cuando obtengas los datos oficiales tras la entrevista, asignar la fecha (ej: "septiembre de 2026"),
-    // y el sistema mostrará automáticamente "Última actualización de datos: septiembre de 2026".
-    lastUpdated: null,
-    status: "pending_confirmation",
-    pendingStatusText: {
-      es: "Datos oficiales: pendientes de confirmación",
-      en: "Official data: pending confirmation",
-      pt: "Dados oficiais: pendentes de confirmação",
-      fr: "Données officielles : en attente de confirmation"
-    },
+    lastUpdated: "23/10/2026",
+    status: "confirmed",
     lastUpdatedPrefix: {
-      es: "Última actualización de datos:",
-      en: "Data last updated:",
-      pt: "Última atualização de dados:",
-      fr: "Dernière mise à jour des données :"
-    },
-    noticePendingOfficial: {
-      es: "Información de tarifas y horarios pendiente de confirmación oficial.",
-      en: "Fares and timetables information pending official confirmation.",
-      pt: "Informações de tarifas e horários pendentes de confirmação oficial.",
-      fr: "Informations sur les tarifs et horaires en attente de confirmation officielle."
+      es: "Última actualización de información:",
+      en: "Information last updated:",
+      pt: "Última atualização de informações:",
+      fr: "Dernière mise à jour des informations :"
     }
   },
 
@@ -45,10 +29,10 @@ const TRANSPORT_DATA = {
     address: "Terminal de Ómnibus, Av. Córdoba y Av. Misiones, Local 4, Puerto Iguazú",
     operationalStatus: "NORMAL", // NORMAL | DELAY | DETOUR
     statusMessage: {
-      es: "Servicios urbanos y turísticos en circulación. Tarifas y horarios en proceso de actualización oficial.",
-      en: "Urban and tourist bus services operating. Fares and timetables under official update.",
-      pt: "Serviços urbanos e turísticos em operação. Tarifas e horários em processo de atualização oficial.",
-      fr: "Services urbains et touristiques en circulation. Tarifs et horaires en cours de mise à jour officielle."
+      es: "Servicios urbanos, turísticos e internacionales operando con normalidad.",
+      en: "Urban, tourist, and international bus services operating normally.",
+      pt: "Serviços urbanos, turísticos e internacionais operando normalmente.",
+      fr: "Services urbains, touristiques et internationaux circulant normalement."
     }
   },
 
@@ -62,9 +46,9 @@ const TRANSPORT_DATA = {
 
   // Categorías de Filtro
   categories: [
-    { id: "all", labelKey: "cat_all", icon: "bi-grid-fill" },
-    { id: "tourist", labelKey: "cat_tourist", icon: "bi-camera-fill" },
-    { id: "international", labelKey: "cat_international", icon: "bi-globe-americas" }
+    { id: "urbanas", labelKey: "cat_urban", icon: "bi-bus-front" },
+    { id: "turisticas", labelKey: "cat_tourist", icon: "bi-camera-fill" },
+    { id: "internacionales", labelKey: "cat_international", icon: "bi-globe-americas" }
   ],
 
   // Destinos turísticos clave para búsqueda rápida (Coordenadas y paradas reales)
@@ -79,14 +63,14 @@ const TRANSPORT_DATA = {
     { id: "cde", name: "Ciudad del Este (Paraguay / CDE)", lineId: "line-internacional-py", icon: "shop", lat: -25.5120, lng: -54.6130 }
   ],
 
-  // Líneas de Colectivos (Recorridos y paradas reales preservados; tarifas/horarios/frecuencias pendientes)
+  // Líneas de Colectivos (Recorridos y paradas reales clasificados en Urbanas, Turísticas e Internacionales)
   lines: [
     {
       id: "line-cataratas",
       number: "L-CAT",
       name: "Línea Cataratas (Parque Nacional)",
       badgeColor: "#059669", // Emerald Green
-      type: "tourist",
+      type: "turisticas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -126,7 +110,7 @@ const TRANSPORT_DATA = {
       number: "L-HITO",
       name: "Línea Hito Tres Fronteras & Costanera",
       badgeColor: "#0284c7", // Sky Blue
-      type: "tourist",
+      type: "turisticas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -163,7 +147,7 @@ const TRANSPORT_DATA = {
       number: "L-AEROPUERTO",
       name: "Línea Aeropuerto Internacional (IGR)",
       badgeColor: "#d97706", // Amber
-      type: "tourist",
+      type: "turisticas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -200,7 +184,7 @@ const TRANSPORT_DATA = {
       number: "L-600",
       name: "Línea 600 Hectáreas (Selva Yriapú)",
       badgeColor: "#16a34a", // Forest Green
-      type: "tourist",
+      type: "turisticas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -238,7 +222,7 @@ const TRANSPORT_DATA = {
       number: "Línea 1",
       name: "Urbano 1: Terminal - B° 1° de Mayo - Belén - SAMIC",
       badgeColor: "#7c3aed", // Purple
-      type: "urban",
+      type: "urbanas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -276,7 +260,7 @@ const TRANSPORT_DATA = {
       number: "Línea 2",
       name: "Urbano 2: Terminal - B° 2000 - Santa Rosa - Rivera",
       badgeColor: "#ea580c", // Orange
-      type: "urban",
+      type: "urbanas",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -312,7 +296,7 @@ const TRANSPORT_DATA = {
       number: "L-INT BR",
       name: "Internacional: Puerto Iguazú ⇆ Foz do Iguaçu (Brasil 🇧🇷)",
       badgeColor: "#2563eb", // Royal Blue
-      type: "international",
+      type: "internacionales",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -353,7 +337,7 @@ const TRANSPORT_DATA = {
       number: "L-INT PY",
       name: "Internacional: Puerto Iguazú ⇆ Ciudad del Este (Paraguay 🇵🇾)",
       badgeColor: "#0284c7", // Sky Blue
-      type: "international",
+      type: "internacionales",
       frequency: null,
       firstBus: null,
       lastBus: null,
@@ -392,21 +376,27 @@ const TRANSPORT_DATA = {
     }
   ],
 
-  // Estructura de Tarifas (Precios sin inventar; marcados como pendientes de confirmación oficial)
-  // Estructura de Tarifas (Precios sin inventar; marcados como pendientes de confirmación oficial)
+  // Estructura de Tarifas
   fares: [
     {
       categoryKey: "fare_cataratas",
-      priceARS: 10000, // pendiente de confirmación oficial
-      residentPriceARS: 4000, // pendiente de confirmación oficial (requiere DNI)
+      priceARS: 10000,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_cataratas_desc",
       validFor: ["L-CAT"]
     },
     {
+      categoryKey: "fare_cataratas_resident",
+      priceARS: 4000,
+      priceBRL: null,
+      priceUSD: null,
+      descriptionKey: "fare_cataratas_resident_desc",
+      validFor: ["L-CAT"]
+    },
+    {
       categoryKey: "fare_airport",
-      priceARS: 8000, // pendiente de confirmación oficial
+      priceARS: 8000,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_airport_desc",
@@ -414,7 +404,7 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_international",
-      priceARS: 12000, // pendiente de confirmación oficial
+      priceARS: 12000,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_international_desc",
@@ -422,7 +412,7 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_international_py",
-      priceARS: 10000, // pendiente de confirmación oficial
+      priceARS: 10000,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_international_py_desc",
@@ -430,23 +420,24 @@ const TRANSPORT_DATA = {
     },
     {
       categoryKey: "fare_urban_general",
-      priceARS: 2800, // pendiente de confirmación oficial
+      priceARS: 2800,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_urban_general_desc",
-      validFor: ["Línea 1", "Línea 2", "L-HITO (Residente)", "L-600 (Residente)"]
+      validFor: ["Línea 1", "Línea 2", "L-HITO", "L-600"]
     },
     {
       categoryKey: "fare_urban_card",
-      priceARS: 2200, // pendiente de confirmación oficial
+      priceARS: 2200,
       priceBRL: null,
       priceUSD: null,
-      descriptionKey: "fare_urban_general_desc",
-      validFor: ["Línea 1", "Línea 2", "L-HITO (Residente)", "L-600 (Residente)"]
+      descriptionKey: "fare_urban_card_desc",
+      validFor: ["Línea 1", "Línea 2", "L-HITO", "L-600"]
     },
     {
       categoryKey: "fare_student_beeg",
-      priceARS: null,
+      priceARS: 0,
+      isFreeBenefit: true,
       priceBRL: null,
       priceUSD: null,
       descriptionKey: "fare_student_beeg_desc",
@@ -454,8 +445,7 @@ const TRANSPORT_DATA = {
     }
   ],
 
-
-  // Medios de Pago (Estructura lista para incorporar los métodos oficiales tras la entrevista)
+  // Medios de Pago
   paymentMethods: [
     {
       id: "cash",
@@ -468,12 +458,6 @@ const TRANSPORT_DATA = {
       icon: "bi-card-checklist",
       titleKey: "pay_sube_company_title",
       descKey: "pay_sube_company_desc"
-    },
-    {
-      id: "pending_notice",
-      icon: "bi-clock-history",
-      titleKey: "pay_pending_title",
-      descKey: "pay_pending_desc"
     }
   ],
 

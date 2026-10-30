@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO & Social Meta Tags -->
-  <title>Rumbo Urbano | Transporte, Recorridos y Mapa</title>
+  <title>Rumbo Urbano | Colectivos, Recorridos y Tarifas Puerto Iguazú (Act. 23/10/2026)</title>
   <meta name="description"
-    content="Consulta recorridos, paradas autorizadas y líneas de colectivos en Puerto Iguazú. Colectivos a Cataratas del Iguazú, Hito Tres Fronteras, Aeropuerto y barrios locales.">
+    content="Consulta recorridos, horarios de cabecera, mapa interactivo y tarifas en ARS, USD y BRL de los colectivos en Puerto Iguazú al 23/10/2026. Líneas Urbanas, Turísticas e Internacionales.">
   <meta name="keywords"
-    content="colectivo cataratas iguazu, transporte urbano puerto iguazu, rio uruguay iguazu, mapa colectivos iguazu, paradas colectivos iguazu, bus hito tres fronteras, bus aeropuerto iguazu">
+    content="colectivo cataratas iguazu, transporte urbano puerto iguazu, rio uruguay iguazu, mapa colectivos iguazu, tarifas colectivos iguazu, lineas urbanas iguazu, bus hito tres fronteras, bus aeropuerto iguazu, colectivo foz do iguacu, colectivo ciudad del este">
   <meta name="author" content="Adriana Dengler">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Rumbo Urbano | Transporte, Recorridos y Mapa">
+  <meta property="og:title" content="Rumbo Urbano | Colectivos, Recorridos y Tarifas Puerto Iguazú (Act. 23/10/2026)">
   <meta property="og:description"
-    content="Consulta recorridos, paradas, líneas y rutas del transporte urbano de Puerto Iguazú.">
+    content="Consulta recorridos, paradas autorizadas, horarios de cabecera y tarifas en ARS, USD y BRL de las líneas urbanas, turísticas e internacionales de Puerto Iguazú.">
   <meta property="og:type" content="website">
 
   <!-- Favicon & Icons -->
@@ -72,10 +72,14 @@
           </li>
         </ul>
       </nav>
-      </ul>
-      </nav>
 
       <div class="header-actions">
+        <!-- Aviso único general de última actualización -->
+        <div class="header-update-badge" id="header-update-badge">
+          <i class="bi bi-clock-history"></i>
+          <span class="data-last-update-display">Última actualización de información: 23/10/2026</span>
+        </div>
+
         <!-- Live Status Badge -->
         <div class="company-status-badge" id="header-company-status">
           <span class="status-indicator-dot dot-green"></span>
@@ -151,6 +155,11 @@
         <span data-i18n="status_normal">Servicio en Circulación</span>
       </div>
 
+      <div class="drawer-update-badge">
+        <i class="bi bi-clock-history"></i>
+        <span class="data-last-update-display">Última actualización de información: 23/10/2026</span>
+      </div>
+
       <nav class="drawer-nav">
         <ul>
           <li><a href="#inicio" class="drawer-nav-link active"><i class="bi bi-house-door-fill"></i> <span
@@ -197,9 +206,11 @@
        ========================================================================== -->
   <section id="inicio" class="hero-section">
     <div class="container hero-content">
-      <div class="hero-badge-top">
-        <i class="bi bi-lightning-charge-fill text-amber"></i>
-        <span data-i18n="hero_badge">TRANSPORTE PÚBLICO PUERTO IGUAZÚ • RÍO URUGUAY</span>
+      <div class="hero-badges-row">
+        <div class="hero-badge-top">
+          <i class="bi bi-lightning-charge-fill text-amber"></i>
+          <span data-i18n="hero_badge">TRANSPORTE PÚBLICO PUERTO IGUAZÚ • RÍO URUGUAY</span>
+        </div>
       </div>
 
       <h1 class="hero-title" data-i18n="hero_title">Moverte por Iguazú nunca fue tan fácil</h1>
@@ -233,19 +244,6 @@
           <!-- Dynamically populated -->
         </div>
       </div>
-
-      <!-- Service Status Message & Centralized Update Date -->
-      <div class="hero-status-banner">
-        <i class="bi bi-info-circle-fill text-emerald"></i>
-        <span id="hero-status-message">Servicios urbanos y turísticos en circulación. Tarifas y horarios en proceso de
-          actualización oficial.</span>
-      </div>
-      <div style="margin-top: 12px; text-align: center;">
-        <span class="data-update-badge-pill">
-          <i class="bi bi-calendar-check"></i>
-          <span class="data-last-update-display">Datos oficiales: pendientes de confirmación</span>
-        </span>
-      </div>
     </div>
   </section>
 
@@ -257,17 +255,18 @@
       <div class="section-header">
         <h2 class="section-title" data-i18n="nav_lines">Líneas y Recorridos de Colectivos</h2>
         <p class="section-subtitle">Selecciona una línea para ver su trazado detallado y paradas autorizadas.</p>
-        <div class="data-update-badge-pill">
-          <i class="bi bi-info-circle"></i>
-          <span class="data-pending-notice-display">Información de tarifas y horarios pendiente de confirmación
-            oficial.</span>
-        </div>
       </div>
 
       <!-- Category Filter Pills & Search -->
       <div class="filter-bar-container">
         <div class="category-pills" id="category-pills-container">
-          <!-- Dynamically populated (Todas, Turísticas, Barriales, Internacional) -->
+          <button class="cat-pill" id="filter-urbanas" data-cat="urbanas" data-filter="urbanas"><i
+              class="bi bi-bus-front"></i> <span data-i18n="cat_urban">Urbanas</span></button>
+          <button class="cat-pill" id="filter-turisticas" data-cat="turisticas" data-filter="turisticas"><i
+              class="bi bi-camera-fill"></i> <span data-i18n="cat_tourist">Turísticas</span></button>
+          <button class="cat-pill" id="filter-internacionales" data-cat="internacionales"
+            data-filter="internacionales"><i class="bi bi-globe-americas"></i> <span
+              data-i18n="cat_international">Internacionales</span></button>
         </div>
 
         <div class="search-box-filter">
@@ -292,10 +291,6 @@
         <h2 class="section-title" data-i18n="planner_title">Planificador de Viajes Inteligente</h2>
         <p class="section-subtitle" data-i18n="planner_subtitle">Selecciona tu punto de partida y destino para conocer
           la combinación de colectivos y paradas óptimas.</p>
-        <div class="data-update-badge-pill">
-          <i class="bi bi-calendar-check"></i>
-          <span class="data-last-update-display">Datos oficiales: pendientes de confirmación</span>
-        </div>
       </div>
 
       <div class="planner-container-grid">
@@ -372,11 +367,6 @@
         <h2 class="section-title" data-i18n="map_section_title">Mapa Interactivo y Planificador de Viajes</h2>
         <p class="section-subtitle" data-i18n="map_section_subtitle">Explora las rutas trazadas, paradas autorizadas y
           calcula tu itinerario en colectivo.</p>
-        <div class="data-update-badge-pill">
-          <i class="bi bi-shield-check"></i>
-          <span class="data-pending-notice-display">Información de tarifas y horarios pendiente de confirmación
-            oficial.</span>
-        </div>
       </div>
 
       <!-- Map Toolbar Controls -->
@@ -474,19 +464,39 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title" data-i18n="fares_title">Tarifas y Medios de Pago</h2>
-        <p class="section-subtitle" data-i18n="fares_subtitle">Información de tarifas en proceso de confirmación
-          oficial.</p>
-        <div class="data-update-badge-pill">
-          <i class="bi bi-calendar-check"></i>
-          <span class="data-last-update-display">Datos oficiales: pendientes de confirmación</span>
-        </div>
+        <p class="section-subtitle" data-i18n="fares_subtitle">Tarifas vigentes del transporte urbano, turístico e internacional.</p>
       </div>
 
-      <!-- Fares Pending Alert Banner -->
-      <div class="fares-pending-alert">
-        <i class="bi bi-info-circle-fill"></i>
-        <span class="data-pending-notice-display">Información de tarifas y horarios pendiente de confirmación
-          oficial.</span>
+      <!-- Conversor estimativo de tarifas -->
+      <div class="fares-exchange-bar">
+        <div class="exchange-rate-info">
+          <div class="exchange-icon-circle">
+            <i class="bi bi-currency-exchange text-emerald"></i>
+          </div>
+          <div>
+            <strong class="exchange-title" data-i18n="converter_title">Conversor estimativo de tarifas</strong>
+            <p class="exchange-clarification" data-i18n="converter_clarification">
+              Conversiones orientativas calculadas con cotizaciones de mercado externas. Las tarifas oficiales informadas por la empresa rigen exclusivamente en Pesos Argentinos (ARS).
+            </p>
+            <span class="exchange-date-badge" id="exchange-rates-date" data-i18n="converter_reference_values">Valores de referencia editables</span>
+          </div>
+        </div>
+        <div class="exchange-inputs-group">
+          <div class="exchange-input-item">
+            <label for="manual-rate-usd">1 USD =</label>
+            <div class="input-currency-box">
+              <input type="number" id="manual-rate-usd" step="10" min="1" value="1050" title="Cotización Dólar en ARS">
+              <span>ARS</span>
+            </div>
+          </div>
+          <div class="exchange-input-item">
+            <label for="manual-rate-brl">1 BRL =</label>
+            <div class="input-currency-box">
+              <input type="number" id="manual-rate-brl" step="5" min="1" value="210" title="Cotización Real en ARS">
+              <span>ARS</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Fares Table -->
@@ -502,7 +512,7 @@
             </tr>
           </thead>
           <tbody id="fares-table-body">
-            <!-- Dynamically populated with pending status cells -->
+            <!-- Dynamically populated with calculated fares -->
           </tbody>
         </table>
       </div>

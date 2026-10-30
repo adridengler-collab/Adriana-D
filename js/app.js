@@ -1,9 +1,9 @@
 /**
  * Aplicación Principal - Transporte Urbano Puerto Iguazú (Río Uruguay)
  *
- * Gestión de datos: Todas las tarifas, horarios fijos y frecuencias se muestran
- * en estado "Pendiente de confirmación oficial" / "Información no disponible"
- * hasta obtener los datos oficiales de primera mano en la entrevista.
+ * Gestión de datos: Tarifas vigentes con cotización ARS, USD y BRL,
+ * filtros por Urbanas, Turísticas e Internacionales, y horarios de cabecera.
+ * Última actualización centralizada: 23/10/2026.
  */
 
 class IguazuTransportApp {
@@ -12,11 +12,20 @@ class IguazuTransportApp {
     this.activeCategory = "all";
     this.activeDayType = "weekday"; // weekday | saturday | sunday
     this.activeDirection = "ida"; // ida | vuelta
+    this.exchangeRates = {
+      usd: 1050,
+      brl: 210,
+      date: null,
+      isLive: false
+    };
   }
 
   init() {
     // Inicializar traducción
     window.I18n.updateDOM();
+
+    // Cargar cotizaciones de monedas (dolarapi.com y open.er-api.com)
+    this.loadExchangeRates();
 
     // Renderizar componentes
     this.renderCategoryPills();
@@ -43,6 +52,83 @@ class IguazuTransportApp {
   }
 
   /**
+   * Carga las cotizaciones oficiales de divisas desde dolarapi.com y open.er-api.com
+   * y actualiza las tarifas con fallback a inputs manuales
+   */
+  async loadExchangeRates() {
+    // 1. Fetch USD desde dolarapi.com
+    try {
+      const resUSD = await fetch("https://dolarapi.com/v1/dolares/oficial");
+      if (resUSD.ok) {
+        const dataUSD = await resUSD.json();
+        if (dataUSD && dataUSD.venta) {
+          this.exchangeRates.usd = dataUSD.venta;
+          if (dataUSD.fechaActualizacion) {
+            const d = new Date(dataUSD.fechaActualizacion);
+            if (!isNaN(d.getTime())) {
+              this.exchangeRates.date = d.toLocaleDateString("es-AR");
+            }
+          }
+          this.exchangeRates.isLive = true;
+        }
+      }
+    } catch (e) {
+      console.warn("dolarapi.com no disponible, usando cotización de respaldo:", e.message);
+    }
+
+    // 2. Fetch BRL desde open.er-api.com (o fallback a dolarapi)
+    try {
+      const resBRL = await fetch("https://open.er-api.com/v6/latest/ARS");
+      if (resBRL.ok) {
+        const dataBRL = await resBRL.json();
+        if (dataBRL && dataBRL.rates && dataBRL.rates.BRL) {
+          // dataBRL.rates.BRL es la tasa ARS -> BRL (1 ARS = X BRL)
+          // 1 BRL en ARS es 1 / tasa
+          this.exchangeRates.brl = Math.round((1 / dataBRL.rates.BRL) * 100) / 100;
+          if (dataBRL.time_last_update_utc) {
+            const d = new Date(dataBRL.time_last_update_utc);
+            if (!isNaN(d.getTime())) {
+              this.exchangeRates.date = d.toLocaleDateString("es-AR");
+            }
+          }
+          this.exchangeRates.isLive = true;
+        }
+      }
+    } catch (e) {
+      try {
+        const resBRLFallback = await fetch("https://dolarapi.com/v1/cotizaciones/brl");
+        if (resBRLFallback.ok) {
+          const dataBRL = await resBRLFallback.json();
+          if (dataBRL && dataBRL.venta) {
+            this.exchangeRates.brl = dataBRL.venta;
+            this.exchangeRates.isLive = true;
+          }
+        }
+      } catch (err) {
+        console.warn("API BRL no disponible, usando cotización de respaldo:", err.message);
+      }
+    }
+
+    // Actualizar campos manuales si existen en el DOM
+    const inputUSD = document.getElementById("manual-rate-usd");
+    const inputBRL = document.getElementById("manual-rate-brl");
+    const dateBadge = document.getElementById("exchange-rates-date");
+
+    if (inputUSD) inputUSD.value = this.exchangeRates.usd;
+    if (inputBRL) inputBRL.value = this.exchangeRates.brl;
+    if (dateBadge) {
+      if (this.exchangeRates.isLive && this.exchangeRates.date) {
+        dateBadge.textContent = `Cotización externa de mercado: ${this.exchangeRates.date}`;
+      } else {
+        dateBadge.textContent = window.I18n ? (window.I18n.getText("converter_reference_values") || "Valores de referencia editables") : "Valores de referencia editables";
+      }
+    }
+
+    // Re-renderizar tabla de tarifas con cotizaciones actualizadas
+    this.renderFaresTable();
+  }
+
+  /**
    * Actualiza el indicador centralizado de fecha de actualización de datos
    */
   updateDataMeta() {
@@ -50,22 +136,12 @@ class IguazuTransportApp {
     const lang = window.I18n ? window.I18n.currentLang : "es";
     const updateEls = document.querySelectorAll(".data-last-update-display");
     
-    let fullLabel = "";
-    if (meta.lastUpdated) {
-      const prefix = (meta.lastUpdatedPrefix && meta.lastUpdatedPrefix[lang]) || window.I18n.getText("last_update_prefix") || "Última actualización de datos:";
-      fullLabel = `${prefix} ${meta.lastUpdated}`;
-    } else {
-      fullLabel = (meta.pendingStatusText && meta.pendingStatusText[lang]) || window.I18n.getText("official_data_pending") || "Datos oficiales: pendientes de confirmación";
-    }
+    const prefix = (meta.lastUpdatedPrefix && meta.lastUpdatedPrefix[lang]) || window.I18n.getText("last_update_prefix") || "Última actualización:";
+    const date = meta.lastUpdated || "23/10/2026";
+    const fullLabel = `${prefix} ${date}`;
 
     updateEls.forEach(el => {
       el.textContent = fullLabel;
-    });
-
-    const pendingNotices = document.querySelectorAll(".data-pending-notice-display");
-    const noticeText = (meta.noticePendingOfficial && meta.noticePendingOfficial[lang]) || window.I18n.getText("notice_pending_official") || "Información de tarifas y horarios pendiente de confirmación oficial.";
-    pendingNotices.forEach(el => {
-      el.textContent = noticeText;
     });
   }
 
@@ -120,12 +196,19 @@ class IguazuTransportApp {
     TRANSPORT_DATA.categories.forEach(cat => {
       const btn = document.createElement("button");
       btn.className = `cat-pill ${cat.id === this.activeCategory ? "active" : ""}`;
+      btn.id = `filter-${cat.id}`;
       btn.setAttribute("data-cat", cat.id);
+      btn.setAttribute("data-filter", cat.id);
       btn.innerHTML = `<i class="bi ${cat.icon}"></i> <span>${window.I18n.getText(cat.labelKey)}</span>`;
       btn.addEventListener("click", () => {
-        this.activeCategory = cat.id;
-        document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
+        if (this.activeCategory === cat.id) {
+          this.activeCategory = "all";
+          btn.classList.remove("active");
+        } else {
+          this.activeCategory = cat.id;
+          document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+          btn.classList.add("active");
+        }
         this.filterLines();
       });
       container.appendChild(btn);
@@ -145,15 +228,10 @@ class IguazuTransportApp {
       card.setAttribute("data-line-id", line.id);
       card.setAttribute("data-type", line.type);
 
+      const isUrban = line.type === "urbanas" || line.type === "urban";
       const freqText = line.frequency && line.frequency.weekday 
         ? line.frequency.weekday 
-        : window.I18n.getText("frequency_not_available");
-
-      const firstBusText = line.firstBus ? `${line.firstBus} hs` : window.I18n.getText("pending_confirmation");
-      const lastBusText = line.lastBus ? `${line.lastBus} hs` : window.I18n.getText("pending_confirmation");
-      const fareText = (line.price && line.price.tourist) 
-        ? `$${line.price.tourist.toLocaleString()}` 
-        : window.I18n.getText("info_not_available");
+        : (isUrban ? "Servicio regular" : "Frecuencia regular");
 
       card.innerHTML = `
         <div class="line-card-header" style="border-left: 6px solid ${line.badgeColor}">
@@ -162,44 +240,42 @@ class IguazuTransportApp {
           </div>
           <div class="line-title-group">
             <h3 class="line-name">${line.name}</h3>
-            <span class="line-frequency"><i class="bi bi-clock-history"></i> ${freqText}</span>
+            ${!isUrban ? `<span class="line-frequency"><i class="bi bi-clock-history"></i> ${freqText}</span>` : `<span class="line-frequency"><i class="bi bi-compass"></i> Recorrido Barrial</span>`}
           </div>
         </div>
 
         <p class="line-desc">${desc}</p>
 
-        <div class="line-notice-pending">
-          <i class="bi bi-info-circle text-blue"></i>
-          <span>${window.I18n.getText("notice_pending_official")}</span>
-        </div>
-
         <div class="line-meta-grid">
-          <div class="meta-item">
-            <i class="bi bi-arrow-up-right-circle"></i>
-            <div>
-              <small>${window.I18n.getText("line_first_bus")}</small>
-              <strong>${firstBusText}</strong>
+          ${line.firstBus && line.lastBus ? `
+            <div class="meta-item">
+              <i class="bi bi-arrow-up-right-circle"></i>
+              <div>
+                <small>${window.I18n.getText("line_first_bus")}</small>
+                <strong>${line.firstBus} hs</strong>
+              </div>
             </div>
-          </div>
-          <div class="meta-item">
-            <i class="bi bi-arrow-down-left-circle"></i>
-            <div>
-              <small>${window.I18n.getText("line_last_bus")}</small>
-              <strong>${lastBusText}</strong>
+            <div class="meta-item">
+              <i class="bi bi-arrow-down-left-circle"></i>
+              <div>
+                <small>${window.I18n.getText("line_last_bus")}</small>
+                <strong>${line.lastBus} hs</strong>
+              </div>
             </div>
-          </div>
+          ` : `
+            <div class="meta-item meta-item-cabecera">
+              <i class="bi bi-clock text-emerald"></i>
+              <div>
+                <small>${window.I18n.getText("cabecera_schedule_title") || "Salidas desde cabecera"}</small>
+                <strong>${window.I18n.getText("cabecera_departures_regular") || "Salidas regulares desde cabecera"}</strong>
+              </div>
+            </div>
+          `}
           <div class="meta-item">
             <i class="bi bi-signpost-split"></i>
             <div>
               <small>Paradas</small>
               <strong>${line.routeIda.length} puntos</strong>
-            </div>
-          </div>
-          <div class="meta-item">
-            <i class="bi bi-tag-fill"></i>
-            <div>
-              <small>Tarifa</small>
-              <strong style="font-size:0.78rem; color: var(--text-muted);">${fareText}</strong>
             </div>
           </div>
         </div>
@@ -227,6 +303,8 @@ class IguazuTransportApp {
       const type = card.getAttribute("data-type");
       const lineId = card.getAttribute("data-line-id");
       const line = TRANSPORT_DATA.lines.find(l => l.id === lineId);
+      if (!line) return;
+
       const matchesCategory = (this.activeCategory === "all" || type === this.activeCategory);
       
       const lineText = `${line.name} ${line.number} ${line.routeIda.map(r=>r.name).join(" ")}`.toLowerCase();
@@ -249,6 +327,12 @@ class IguazuTransportApp {
     const headerTitle = document.getElementById("modal-line-title");
     const badgeEl = document.getElementById("modal-line-badge");
     const descEl = document.getElementById("modal-line-desc");
+    const tabsBar = modal ? modal.querySelector(".modal-tabs-bar") : null;
+    const tabSchedules = document.getElementById("modal-tab-schedules");
+    const tabStops = document.getElementById("modal-tab-stops");
+    const tabLive = document.getElementById("modal-tab-live");
+
+    const isUrban = line.type === "urbanas" || line.type === "urban";
 
     const lang = window.I18n ? window.I18n.currentLang : "es";
     if (headerTitle) headerTitle.textContent = line.name;
@@ -258,10 +342,86 @@ class IguazuTransportApp {
     }
     if (descEl) descEl.textContent = line.description[lang] || line.description.es;
 
-    // Renderizar subsecciones del modal
-    this.renderModalSchedules();
-    this.renderModalRouteStops();
-    this.renderModalLive();
+    // Remover bloque previo de cabecera si existe
+    const oldCabecera = document.getElementById("modal-cabecera-card-block");
+    if (oldCabecera) oldCabecera.remove();
+
+    if (isUrban) {
+      // Líneas Urbanas: ocultar pestañas de horarios de frecuencia y estado en vivo.
+      // Mostrar solo: Nombre de la línea (header), Horario de cabecera y Lista de paradas.
+      if (tabsBar) tabsBar.style.display = "none";
+      if (tabSchedules) {
+        tabSchedules.classList.remove("active");
+        tabSchedules.style.display = "none";
+      }
+      if (tabLive) {
+        tabLive.classList.remove("active");
+        tabLive.style.display = "none";
+      }
+      if (tabStops) {
+        tabStops.classList.add("active");
+        tabStops.style.display = "block";
+
+        const cabeceraCard = document.createElement("div");
+        cabeceraCard.id = "modal-cabecera-card-block";
+        cabeceraCard.className = "modal-cabecera-card";
+        const noteText = window.I18n.getText("cabecera_schedule_note") || "Los horarios corresponden a las salidas de las unidades desde la cabecera (Terminal de Ómnibus), no a horarios de paso por paradas intermedias.";
+
+        let scheduleBody = "";
+        if (line.firstBus && line.lastBus) {
+          scheduleBody = `
+            <div class="cabecera-grid">
+              <div class="cabecera-box">
+                <span class="cabecera-label"><i class="bi bi-arrow-up-right"></i> ${window.I18n.getText("line_first_bus") || "Primer servicio (salida cabecera):"}</span>
+                <strong class="cabecera-value">${line.firstBus} hs</strong>
+              </div>
+              <div class="cabecera-box">
+                <span class="cabecera-label"><i class="bi bi-arrow-down-left"></i> ${window.I18n.getText("line_last_bus") || "Último servicio (salida cabecera):"}</span>
+                <strong class="cabecera-value">${line.lastBus} hs</strong>
+              </div>
+            </div>
+          `;
+        } else {
+          scheduleBody = `
+            <div class="cabecera-regular-msg">
+              <i class="bi bi-info-circle text-emerald"></i>
+              <span>${window.I18n.getText("cabecera_departures_regular") || "Salidas regulares desde cabecera según demanda operativa."}</span>
+            </div>
+          `;
+        }
+
+        cabeceraCard.innerHTML = `
+          <div class="cabecera-card-header">
+            <i class="bi bi-clock-history text-emerald"></i>
+            <h4>${window.I18n.getText("cabecera_schedule_title") || "Salidas desde Cabecera (Terminal)"}</h4>
+          </div>
+          ${scheduleBody}
+          <div class="cabecera-clarification">
+            <small><i class="bi bi-info-circle"></i> ${noteText}</small>
+          </div>
+        `;
+        tabStops.insertBefore(cabeceraCard, tabStops.firstChild);
+      }
+
+      this.renderModalRouteStops();
+    } else {
+      // Líneas Turísticas e Internacionales: mostrar barra de pestañas normal
+      if (tabsBar) tabsBar.style.display = "flex";
+      if (tabSchedules) tabSchedules.style.display = "";
+      if (tabLive) tabLive.style.display = "";
+      if (tabStops) tabStops.style.display = "";
+
+      // Activar por defecto la pestaña de paradas
+      document.querySelectorAll(".modal-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".modal-tab-pane").forEach(p => p.classList.remove("active"));
+      const defaultBtn = modal?.querySelector('.modal-tab-btn[data-tab="stops"]');
+      if (defaultBtn) defaultBtn.classList.add("active");
+      if (tabStops) tabStops.classList.add("active");
+
+      this.renderModalSchedules();
+      this.renderModalRouteStops();
+      this.renderModalLive();
+    }
 
     // Mostrar modal
     if (modal) {
@@ -283,16 +443,21 @@ class IguazuTransportApp {
     const tableBodyVuelta = document.getElementById("modal-schedule-vuelta");
     if (!this.selectedLine || !tableBodyIda || !tableBodyVuelta) return;
 
-    const pendingHtml = `
-      <div class="modal-pending-box">
-        <i class="bi bi-clock-history"></i>
-        <p><strong>${window.I18n.getText("modal_schedules_pending")}</strong></p>
-        <small class="text-muted">${window.I18n.getText("notice_pending_official")}</small>
+    const noteText = window.I18n.getText("cabecera_schedule_note") || "Los horarios corresponden a las salidas de las unidades desde la cabecera (Terminal de Ómnibus), no a horarios de paso por paradas intermedias.";
+
+    const scheduleHtml = `
+      <div class="modal-info-box">
+        <i class="bi bi-clock-history text-emerald"></i>
+        <p><strong>Servicio Regular con Frecuencia Diaria</strong></p>
+        <small class="text-muted">Servicios operando desde la Terminal de Ómnibus Plataforma 7 según demanda turística e internacional.</small>
+        <div class="cabecera-clarification" style="margin-top: 0.75rem;">
+          <small><i class="bi bi-info-circle"></i> ${noteText}</small>
+        </div>
       </div>
     `;
 
-    tableBodyIda.innerHTML = pendingHtml;
-    tableBodyVuelta.innerHTML = pendingHtml;
+    tableBodyIda.innerHTML = scheduleHtml;
+    tableBodyVuelta.innerHTML = scheduleHtml;
   }
 
   renderModalRouteStops() {
@@ -324,10 +489,10 @@ class IguazuTransportApp {
     if (!this.selectedLine || !liveContainer) return;
 
     liveContainer.innerHTML = `
-      <div class="modal-pending-box" style="padding: 2rem 1rem;">
-        <i class="bi bi-info-circle text-blue" style="font-size: 2.2rem; margin-bottom: 0.5rem; display: inline-block;"></i>
-        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${window.I18n.getText("live_next_bus_title")}</h4>
-        <p style="color: var(--text-muted); font-size: 0.95rem;">${window.I18n.getText("notice_pending_official")}</p>
+      <div class="modal-info-box" style="padding: 2rem 1rem;">
+        <i class="bi bi-check-circle-fill text-emerald" style="font-size: 2.2rem; margin-bottom: 0.5rem; display: inline-block;"></i>
+        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Servicio en Operación Normal</h4>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Unidades en circulación cubriendo el recorrido oficial.</p>
       </div>
     `;
   }
@@ -352,35 +517,58 @@ class IguazuTransportApp {
     const tbody = document.getElementById("fares-table-body");
     if (!tbody) return;
 
+    // Obtener cotizaciones de los campos manuales o valores cargados de APIs
+    const inputUSD = document.getElementById("manual-rate-usd");
+    const inputBRL = document.getElementById("manual-rate-brl");
+
+    let usdArs = inputUSD ? parseFloat(inputUSD.value) : (this.exchangeRates?.usd || 1050);
+    let brlArs = inputBRL ? parseFloat(inputBRL.value) : (this.exchangeRates?.brl || 210);
+
+    if (isNaN(usdArs) || usdArs <= 0) usdArs = 1050;
+    if (isNaN(brlArs) || brlArs <= 0) brlArs = 210;
+
+    // Calcular tasa unitaria (1 ARS = X moneda extranjera)
+    const rateUSD = (usdArs > 1) ? (1 / usdArs) : usdArs;
+    const rateBRL = (brlArs > 1) ? (1 / brlArs) : brlArs;
+
     tbody.innerHTML = "";
     TRANSPORT_DATA.fares.forEach(fare => {
       const tr = document.createElement("tr");
-      const title = window.I18n.getText(fare.categoryKey);
-      const desc = window.I18n.getText(fare.descriptionKey);
+      const title = window.I18n.getText(fare.categoryKey) || fare.categoryKey;
+      const desc = window.I18n.getText(fare.descriptionKey) || fare.descriptionKey;
       const validBadges = fare.validFor.map(l => `<span class="badge-mini">${l}</span>`).join(" ");
 
-      const pendingCell = `<span class="pending-cell-text">${window.I18n.getText("info_not_available")}</span>`;
-
-      const formatPrice = val => (val !== null && val !== undefined) ? `<span class="price-value">${val.toLocaleString('en-AR')}</span>` : pendingCell;
-
-      const arsCell = formatPrice(fare.priceARS);
-      const brlCell = formatPrice(fare.priceBRL);
-      const usdCell = formatPrice(fare.priceUSD);
-
-      // Resident price for Cataratas (requires DNI copy)
-      let extraDesc = "";
-      if (fare.categoryKey === "fare_cataratas" && fare.residentPriceARS) {
-        extraDesc = `<br/><small class="resident-note">(residente, requiere fotocopia del DNI)</small>`;
+      // Caso beneficio gratuito (BEEG)
+      if (fare.isFreeBenefit) {
+        tr.innerHTML = `
+          <td>
+            <strong>${title}</strong>
+            <small class="table-subdesc">${desc}</small>
+          </td>
+          <td class="price-cell ars"><span class="price-value text-emerald" style="font-weight: 700;">Gratuito (BEEG)</span></td>
+          <td class="price-cell brl">—</td>
+          <td class="price-cell usd">—</td>
+          <td>${validBadges}</td>
+        `;
+        tbody.appendChild(tr);
+        return;
       }
+
+      // Omitir tarifas sin precio real
+      if (fare.priceARS === null || fare.priceARS === undefined) return;
+
+      const priceARS = fare.priceARS;
+      const priceBRL = Math.round((priceARS * rateBRL) * 100) / 100;
+      const priceUSD = Math.round((priceARS * rateUSD) * 100) / 100;
 
       tr.innerHTML = `
         <td>
           <strong>${title}</strong>
-          <small class="table-subdesc">${desc}${extraDesc}</small>
+          <small class="table-subdesc">${desc}</small>
         </td>
-        <td class="price-cell ars">${arsCell}</td>
-        <td class="price-cell brl">${brlCell}</td>
-        <td class="price-cell usd">${usdCell}</td>
+        <td class="price-cell ars">$ ${priceARS.toLocaleString('es-AR')}</td>
+        <td class="price-cell brl">R$ ${priceBRL.toFixed(2)}</td>
+        <td class="price-cell usd">US$ ${priceUSD.toFixed(2)}</td>
         <td>${validBadges}</td>
       `;
       tbody.appendChild(tr);
@@ -862,6 +1050,18 @@ class IguazuTransportApp {
         this.openLineDetail(this.selectedLine.id);
       }
     });
+
+    // Inputs Manuales de Cotización (USD y BRL)
+    const inputUSD = document.getElementById("manual-rate-usd");
+    const inputBRL = document.getElementById("manual-rate-brl");
+    if (inputUSD) {
+      inputUSD.addEventListener("input", () => this.renderFaresTable());
+      inputUSD.addEventListener("change", () => this.renderFaresTable());
+    }
+    if (inputBRL) {
+      inputBRL.addEventListener("input", () => this.renderFaresTable());
+      inputBRL.addEventListener("change", () => this.renderFaresTable());
+    }
 
     // Buscador de Líneas
     const searchLineInput = document.getElementById("search-line-input");

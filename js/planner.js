@@ -416,7 +416,7 @@ class TripPlanner {
       const transitMins = Math.max(5, Math.round((opt.transitDistKm * 2.2) + (stopCount * 1.5)));
       const totalMins = walkStartMins + transitMins + walkEndMins;
 
-      const isInternational = opt.line.type === "international";
+      const isInternational = opt.line.type === "international" || opt.line.type === "internacionales";
 
       return {
         success: true,

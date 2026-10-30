@@ -18,17 +18,14 @@ const TRANSLATIONS = {
     status_alert: "Avisos Activos",
 
     // Indicadores globales de datos
-    info_not_available: "Información no disponible",
-    pending_confirmation: "Pendiente de confirmación oficial",
-    official_data_pending: "Datos oficiales: pendientes de confirmación",
-    last_update_label: "Última actualización:",
-    last_update_prefix: "Última actualización de datos:",
-    last_update_pending: "pendiente de confirmación",
-    notice_pending_official: "Información de tarifas y horarios pendiente de confirmación oficial.",
-    fare_not_available: "Tarifa: Información no disponible",
-    schedule_not_available: "Horario: Información no disponible",
-    frequency_not_available: "Frecuencia: Información no disponible",
-    modal_schedules_pending: "Horarios y frecuencias pendientes de confirmación oficial en boletería.",
+    header_last_update_prefix: "Última actualización de información:",
+    header_last_update: "Última actualización de información: 23/10/2026",
+    converter_title: "Conversor estimativo de tarifas",
+    converter_clarification: "Conversiones orientativas calculadas con cotizaciones de mercado externas. Las tarifas oficiales informadas por la empresa rigen exclusivamente en Pesos Argentinos (ARS).",
+    converter_reference_values: "Valores de referencia editables",
+    cabecera_schedule_title: "Salidas desde Cabecera (Terminal)",
+    cabecera_schedule_note: "Los horarios corresponden a las salidas desde la cabecera (Terminal de Ómnibus), no a horarios de paso por paradas intermedias.",
+    cabecera_departures_regular: "Salidas regulares desde cabecera según demanda operativa.",
 
     // Hero
     hero_badge: "TRANSPORTE PÚBLICO PUERTO IGUAZÚ • RÍO URUGUAY",
@@ -47,9 +44,9 @@ const TRANSLATIONS = {
 
     // Categories / Filters
     cat_all: "Todas las Líneas",
-    cat_tourist: "Turísticas y Cataratas",
-    cat_urban: "Líneas Barriales",
-    cat_international: "Internacional",
+    cat_tourist: "Turísticas",
+    cat_urban: "Urbanas",
+    cat_international: "Internacionales",
 
     // Status / Notice
     live_next_bus_title: "Estado del Servicio",
@@ -65,8 +62,8 @@ const TRANSLATIONS = {
     line_direction_ida: "Ida (Hacia Destino)",
     line_direction_vuelta: "Vuelta (Hacia Terminal/Centro)",
     line_stops_count: "paradas principales",
-    line_first_bus: "Primer servicio:",
-    line_last_bus: "Último servicio:",
+    line_first_bus: "Primer servicio (salida cabecera):",
+    line_last_bus: "Último servicio (salida cabecera):",
     line_show_on_map: "Trazar en Mapa",
     line_download_pdf: "Guardar Información",
 
@@ -133,15 +130,17 @@ const TRANSLATIONS = {
 
     // Fares Section
     fares_title: "Tarifas y Medios de Pago",
-    fares_subtitle: "Información de tarifas en proceso de confirmación oficial.",
+    fares_subtitle: "Tarifas vigentes del transporte urbano, turístico e internacional.",
     fare_category_col: "Categoría / Recorrido",
     fare_price_ars_col: "Pesos (ARS)",
     fare_price_brl_col: "Reales (BRL)",
     fare_price_usd_col: "Dólares (USD)",
     fare_validity_col: "Líneas Aplicables",
 
-    fare_cataratas: "Servicio Cataratas (Parque Nacional)",
+    fare_cataratas: "Servicio Cataratas (Parque Nacional - General)",
     fare_cataratas_desc: "Boleto directo al Portal de acceso a Cataratas (RN 12)",
+    fare_cataratas_resident: "Servicio Cataratas (Residentes de Puerto Iguazú)",
+    fare_cataratas_resident_desc: "Tarifa para residentes de Puerto Iguazú. Condición: presentar fotocopia del DNI.",
     fare_airport: "Servicio Especial Aeropuerto IGR",
     fare_airport_desc: "Desde Terminal/Centro hasta el Aeropuerto Internacional Mayor Carlos Krause",
     fare_international: "Servicio Internacional Foz do Iguaçu (Brasil)",
@@ -150,19 +149,19 @@ const TRANSLATIONS = {
     fare_international_py_desc: "Directo a Paraguay vía Foz do Iguaçu y Puente de la Amistad hasta CDE",
     fare_tourist_hito: "Servicio Turístico Hito / 600 Ha",
     fare_tourist_hito_desc: "Acceso a Hito Tres Fronteras, Costanera y Reserva Selva Yriapú",
-    fare_urban_general: "Boleto Urbano Local / Residente",
-    fare_urban_general_desc: "Tarifa general barrial",
+    fare_urban_general: "Boleto Urbano Local (Efectivo)",
+    fare_urban_general_desc: "Tarifa general barrial abonando en efectivo",
+    fare_urban_card: "Boleto Urbano con Tarjeta de la Empresa",
+    fare_urban_card_desc: "Abonando con tarjeta electrónica propia de Río Uruguay",
     fare_student_beeg: "Boleto Estudiantil Gratuito (BEEG)",
-    fare_student_beeg_desc: "Para estudiantes registrados en el ciclo lectivo",
+    fare_student_beeg_desc: "Beneficio gratuito para estudiantes",
 
     // Payment Methods
     pay_methods_title: "Medios de Pago",
-    pay_pending_title: "Medios de pago: Pendiente de confirmación oficial",
-    pay_pending_desc: "Los medios de pago vigentes, tarjetas locales y opciones electrónicas se encuentran pendientes de confirmación oficial.",
     pay_cash_title: "Efectivo",
-    pay_cash_desc: "Pago en efectivo",
-    pay_sube_company_title: "Tarjeta SUBE de la empresa",
-    pay_sube_company_desc: "Tarjeta propia de la empresa; no corresponde al sistema SUBE nacional",
+    pay_cash_desc: "Pago en efectivo a bordo de las unidades y en boleterías. En servicios turísticos e internacionales se aceptan también reales y dólares en boletería.",
+    pay_sube_company_title: "Tarjeta propia de la empresa",
+    pay_sube_company_desc: "Tarjeta electrónica propia de la empresa Río Uruguay. No corresponde a la tarjeta SUBE nacional.",
 
 
     // Points of Sale
@@ -184,7 +183,7 @@ const TRANSLATIONS = {
     faq_subtitle: "Respuestas rápidas a las consultas más habituales de usuarios y turistas.",
     faq_search_placeholder: "Buscar una pregunta (ej: equipaje, Cataratas, Terminal)...",
     faq_q1: "¿Cómo se abonan los pasajes del colectivo?",
-    faq_a1: "Los medios de pago aceptados y formas de cobro están pendientes de confirmación oficial. Para mayor precisión, consulte directamente en la boletería central de la Terminal.",
+    faq_a1: "Los pasajes se abonan en efectivo a bordo de las unidades o mediante la tarjeta electrónica propia de Río Uruguay. Para servicios turísticos e internacionales también se aceptan reales y dólares en boletería.",
     faq_q2: "¿Dónde sale el colectivo para ir a las Cataratas?",
     faq_a2: "El colectivo a Cataratas sale de la Plataforma 7 de la Terminal de Ómnibus de Puerto Iguazú (Av. Córdoba y Misiones), con paradas sobre Av. Victoria Aguirre y Ruta Nacional 12.",
     faq_q3: "¿Puedo llevar valijas o mochilas grandes en el colectivo?",
@@ -194,7 +193,7 @@ const TRANSLATIONS = {
     faq_q5: "¿Dónde puedo consultar información oficial de tarifas y frecuencias?",
     faq_a5: "En la Boletería Local 4 de Río Uruguay en la Terminal de Ómnibus (Av. Córdoba y Misiones) y en los puestos de atención habilitados.",
     faq_q6: "¿Los residentes de Puerto Iguazú tienen tarifa diferencial?",
-    faq_a6: "El servicio urbano prevé modalidades para residentes locales, sujeto a las condiciones y documentación vigentes en la administración.",
+    faq_a6: "Sí. Para el servicio a Cataratas los residentes de Puerto Iguazú abonan $4.000 presentando fotocopia del DNI. Además, en el servicio urbano general rige la tarifa con tarjeta propia de la empresa ($2.200 frente a $2.800 en efectivo).",
 
     // Contact & Footer
     contact_title: "Atención al Pasajero",
@@ -223,17 +222,14 @@ const TRANSLATIONS = {
     status_alert: "Active Alerts",
 
     // Global Data Indicators
-    info_not_available: "Information not available",
-    pending_confirmation: "Pending official confirmation",
-    official_data_pending: "Official data: pending confirmation",
-    last_update_label: "Last updated:",
-    last_update_prefix: "Data last updated:",
-    last_update_pending: "pending confirmation",
-    notice_pending_official: "Fares and timetables information pending official confirmation.",
-    fare_not_available: "Fare: Information not available",
-    schedule_not_available: "Timetable: Information not available",
-    frequency_not_available: "Frequency: Information not available",
-    modal_schedules_pending: "Timetables and frequencies pending official confirmation at the ticket office.",
+    header_last_update_prefix: "Information last updated:",
+    header_last_update: "Information last updated: 23/10/2026",
+    converter_title: "Estimated Fare Converter",
+    converter_clarification: "Indicative conversions calculated using external market exchange rates. Official company fares apply exclusively in Argentine Pesos (ARS).",
+    converter_reference_values: "Editable reference values",
+    cabecera_schedule_title: "Departures from Terminal (Cabecera)",
+    cabecera_schedule_note: "Timetables indicate bus departure times from the terminal (cabecera), not arrival times at intermediate stops.",
+    cabecera_departures_regular: "Regular departures from terminal according to operational demand.",
 
     // Hero
     hero_badge: "PUERTO IGUAZÚ PUBLIC TRANSPORT • RÍO URUGUAY",
@@ -252,8 +248,8 @@ const TRANSLATIONS = {
 
     // Categories / Filters
     cat_all: "All Bus Lines",
-    cat_tourist: "Tourist & Falls",
-    cat_urban: "Neighborhood Lines",
+    cat_tourist: "Tourist",
+    cat_urban: "Urban",
     cat_international: "International",
 
     // Status / Notice
@@ -270,8 +266,8 @@ const TRANSLATIONS = {
     line_direction_ida: "Outbound (To Destination)",
     line_direction_vuelta: "Inbound (To Bus Station/Downtown)",
     line_stops_count: "major stops",
-    line_first_bus: "First bus:",
-    line_last_bus: "Last bus:",
+    line_first_bus: "First bus (terminal departure):",
+    line_last_bus: "Last bus (terminal departure):",
     line_show_on_map: "Show on Map",
     line_download_pdf: "Save Information",
 
@@ -338,15 +334,17 @@ const TRANSLATIONS = {
 
     // Fares Section
     fares_title: "Fares & Payment Methods",
-    fares_subtitle: "Fare details are currently pending official confirmation.",
+    fares_subtitle: "Current fares for urban, tourist, and international transit.",
     fare_category_col: "Category / Route",
     fare_price_ars_col: "Pesos (ARS)",
     fare_price_brl_col: "Reais (BRL)",
     fare_price_usd_col: "US Dollars (USD)",
     fare_validity_col: "Applicable Lines",
 
-    fare_cataratas: "Iguazu Falls (National Park) Service",
+    fare_cataratas: "Iguazu Falls Service (National Park - General)",
     fare_cataratas_desc: "Direct bus to the National Park Falls entrance (RN 12)",
+    fare_cataratas_resident: "Iguazu Falls Service (Puerto Iguazú Residents)",
+    fare_cataratas_resident_desc: "Fare for Puerto Iguazú residents. Condition: present a photocopy of national ID (DNI).",
     fare_airport: "IGR Airport Special Service",
     fare_airport_desc: "From Bus Station/Downtown to Cataratas Int. Airport (IGR)",
     fare_international: "International Service to Foz do Iguaçu (Brazil)",
@@ -355,15 +353,19 @@ const TRANSLATIONS = {
     fare_international_py_desc: "Direct bus to Paraguay via Foz do Iguaçu and Friendship Bridge to CDE",
     fare_tourist_hito: "Tourist Service Three Borders / 600 Ha",
     fare_tourist_hito_desc: "Access to Three Borders Landmark, River Promenade, and Yriapú Reserve",
-    fare_urban_general: "Local Urban / Resident Bus Ticket",
-    fare_urban_general_desc: "General local neighborhood fare",
+    fare_urban_general: "Local Urban Bus (Cash)",
+    fare_urban_general_desc: "General neighborhood fare paying with cash",
+    fare_urban_card: "Local Urban Bus with Company Card",
+    fare_urban_card_desc: "Paying with Río Uruguay's proprietary electronic card",
     fare_student_beeg: "Free Student Pass (BEEG)",
-    fare_student_beeg_desc: "For registered students during school terms",
+    fare_student_beeg_desc: "Free benefit for students",
 
     // Payment Methods
     pay_methods_title: "Payment Methods",
-    pay_pending_title: "Payment methods: Pending official confirmation",
-    pay_pending_desc: "Accepted payment methods and local smartcard details are pending official confirmation.",
+    pay_cash_title: "Cash",
+    pay_cash_desc: "Cash payment in Argentine Pesos on board buses and at ticket booths. Reais and US Dollars are also accepted at the ticket office for tourist and international routes.",
+    pay_sube_company_title: "Company's own smartcard",
+    pay_sube_company_desc: "Proprietary electronic card issued by Río Uruguay. Does not correspond to the national SUBE card.",
 
     // Points of Sale
     points_title: "Ticket Offices & Information Points",
@@ -384,7 +386,7 @@ const TRANSLATIONS = {
     faq_subtitle: "Quick answers to common questions for visitors and residents.",
     faq_search_placeholder: "Search questions (e.g. luggage, Falls, Bus Station)...",
     faq_q1: "How do I pay for bus tickets?",
-    faq_a1: "Accepted payment methods are pending official confirmation. Please consult directly at the Central Bus Station ticket office.",
+    faq_a1: "Tickets can be paid in cash aboard the buses or via Río Uruguay's proprietary card. Tourist and international routes also accept BRL and USD at the ticket office.",
     faq_q2: "Where does the bus to Iguazu Falls depart?",
     faq_a2: "The bus to Iguazu Falls departs from Platform 7 at the Puerto Iguazú Central Bus Station (Av. Córdoba and Misiones), with stops along Av. Victoria Aguirre and Route 12.",
     faq_q3: "Can I bring suitcases or large backpacks on the bus?",
@@ -394,7 +396,7 @@ const TRANSLATIONS = {
     faq_q5: "Where can I find official fares and schedules?",
     faq_a5: "At Río Uruguay Ticket Booth #4 in the Central Bus Terminal (Av. Córdoba & Misiones) and official service points.",
     faq_q6: "Do Puerto Iguazú residents get discounted fares?",
-    faq_a6: "Local resident terms are subject to current administrative conditions at ticket booths.",
+    faq_a6: "Yes. For the Falls service, Puerto Iguazú residents pay $4,000 presenting a photocopy of their DNI. In the general urban service, the company smartcard rate is $2,200 vs $2,800 cash.",
 
     // Contact & Footer
     contact_title: "Customer Support & Inquiries",
@@ -423,17 +425,14 @@ const TRANSLATIONS = {
     status_alert: "Avisos Ativos",
 
     // Indicadores globais de dados
-    info_not_available: "Informação não disponível",
-    pending_confirmation: "Pendente de confirmação oficial",
-    official_data_pending: "Dados oficiais: pendentes de confirmação",
-    last_update_label: "Última atualização:",
-    last_update_prefix: "Última atualização de dados:",
-    last_update_pending: "pendente de confirmação",
-    notice_pending_official: "Informações de tarifas e horários pendentes de confirmação oficial.",
-    fare_not_available: "Tarifa: Informação não disponível",
-    schedule_not_available: "Horário: Informação não disponível",
-    frequency_not_available: "Frequência: Informação não disponível",
-    modal_schedules_pending: "Horários e frequências pendentes de confirmação oficial na bilheteria.",
+    header_last_update_prefix: "Última atualização de informações:",
+    header_last_update: "Última atualização de informações: 23/10/2026",
+    converter_title: "Conversor estimativo de tarifas",
+    converter_clarification: "Conversões orientativas calculadas com cotações de mercado externas. As tarifas oficiais informadas pela empresa vigoram exclusivamente em Pesos Argentinos (ARS).",
+    converter_reference_values: "Valores de referência editáveis",
+    cabecera_schedule_title: "Partidas da Rodoviária (Cabecera)",
+    cabecera_schedule_note: "Os horários correspondem às partidas dos ônibus a partir do terminal (cabecera), e não a horários de passagem pelos pontos intermediários.",
+    cabecera_departures_regular: "Partidas regulares do terminal de acordo com a demanda operacional.",
 
     // Hero
     hero_badge: "TRANSPORTE PÚBLICO PUERTO IGUAZÚ • RÍO URUGUAY",
@@ -452,9 +451,9 @@ const TRANSLATIONS = {
 
     // Categories / Filters
     cat_all: "Todas as Linhas",
-    cat_tourist: "Turísticas e Cataratas",
-    cat_urban: "Linhas de Bairro",
-    cat_international: "Internacional",
+    cat_tourist: "Turísticas",
+    cat_urban: "Urbanas",
+    cat_international: "Internacionais",
 
     // Status / Notice
     live_next_bus_title: "Status do Serviço",
@@ -470,8 +469,8 @@ const TRANSLATIONS = {
     line_direction_ida: "Ida (Rumo ao Destino)",
     line_direction_vuelta: "Volta (Rumo à Rodoviária/Centro)",
     line_stops_count: "principais paradas",
-    line_first_bus: "Primeiro ônibus:",
-    line_last_bus: "Último ônibus:",
+    line_first_bus: "Primeiro ônibus (saída terminal):",
+    line_last_bus: "Último ônibus (saída terminal):",
     line_show_on_map: "Traçar no Mapa",
     line_download_pdf: "Salvar Informação",
 
@@ -538,32 +537,38 @@ const TRANSLATIONS = {
 
     // Fares Section
     fares_title: "Tarifas e Meios de Pagamento",
-    fares_subtitle: "Informações de tarifas pendentes de confirmação oficial.",
+    fares_subtitle: "Tarifas vigentes do transporte urbano, turístico e internacional.",
     fare_category_col: "Categoria / Itinerário",
     fare_price_ars_col: "Pesos (ARS)",
     fare_price_brl_col: "Reais (BRL)",
     fare_price_usd_col: "Dólares (USD)",
     fare_validity_col: "Linhas Aplicáveis",
 
-    fare_cataratas: "Serviço Cataratas (Parque Nacional)",
+    fare_cataratas: "Serviço Cataratas (Parque Nacional - Geral)",
     fare_cataratas_desc: "Ônibus direto ao portal de entrada do Parque Nacional (RN 12)",
+    fare_cataratas_resident: "Serviço Cataratas (Moradores de Puerto Iguazú)",
+    fare_cataratas_resident_desc: "Tarifa para moradores de Puerto Iguazú. Condição: apresentar cópia do documento de identidade (DNI).",
     fare_airport: "Serviço Especial Aeroporto (IGR)",
-    fare_airport_desc: "Da Rodoviária/Centro até o Aeroporto Internacional",
+    fare_airport_desc: "Da Rodoviária/Centro até o Aeroporto Internacional Mayor Carlos Krause",
     fare_international: "Serviço Internacional Foz do Iguaçu (Brasil)",
     fare_international_desc: "Travessia pela Ponte Tancredo Neves até o Terminal TTU em Foz do Iguaçu",
     fare_international_py: "Serviço Internacional Ciudad del Este (Paraguai)",
     fare_international_py_desc: "Direto ao Paraguai via Foz do Iguaçu e Ponte da Amizade até CDE",
     fare_tourist_hito: "Serviço Turístico Marco / 600 Ha",
     fare_tourist_hito_desc: "Acesso ao Marco das Três Fronteiras, Orla e Reserva Selva Yriapú",
-    fare_urban_general: "Passagem Urbana Local / Morador",
-    fare_urban_general_desc: "Tarifa geral para bairros",
+    fare_urban_general: "Ônibus Urbano Local (Dinheiro)",
+    fare_urban_general_desc: "Tarifa geral de bairro paga em dinheiro",
+    fare_urban_card: "Ônibus Urbano com Cartão da Empresa",
+    fare_urban_card_desc: "Pagamento com o cartão eletrônico próprio da Río Uruguay",
     fare_student_beeg: "Passe Estudantil Gratuito (BEEG)",
-    fare_student_beeg_desc: "Para estudantes cadastrados no período letivo",
+    fare_student_beeg_desc: "Benefício gratuito para estudantes",
 
     // Payment Methods
     pay_methods_title: "Meios de Pagamento",
-    pay_pending_title: "Meios de pagamento: Pendente de confirmação oficial",
-    pay_pending_desc: "As formas de pagamento aceitas e detalhes de cartões estão pendentes de confirmação oficial.",
+    pay_cash_title: "Dinheiro",
+    pay_cash_desc: "Pagamento em dinheiro em Pesos Argentinos a bordo dos veículos e em bilheterias. Em linhas turísticas e internacionais também são aceitos reais e dólares na bilheteria.",
+    pay_sube_company_title: "Cartão próprio da empresa",
+    pay_sube_company_desc: "Cartão eletrônico próprio da empresa prestatária (Río Uruguay). Não corresponde ao sistema SUBE nacional.",
 
     // Points of Sale
     points_title: "Bilheterias e Pontos de Atendimento",
@@ -584,7 +589,7 @@ const TRANSLATIONS = {
     faq_subtitle: "Respostas rápidas para as dúvidas mais comuns de visitantes e moradores.",
     faq_search_placeholder: "Pesquisar dúvida (ex: bagagem, Cataratas, Rodoviária)...",
     faq_q1: "Como são pagas as passagens de ônibus?",
-    faq_a1: "As formas de pagamento estão pendentes de confirmação oficial. Para informações precisas, consulte o guichê da Rodoviária.",
+    faq_a1: "As passagens são pagas em dinheiro a bordo dos ônibus ou pelo cartão da empresa Río Uruguay. Rotas turísticas e internacionais também aceitam reais e dólares na bilheteria.",
     faq_q2: "De onde sai o ônibus para as Cataratas?",
     faq_a2: "O ônibus sai da Plataforma 7 da Rodoviária de Puerto Iguazú (Av. Córdoba e Misiones), com paradas na Av. Victoria Aguirre e Ruta 12.",
     faq_q3: "Posso levar malas ou mochilas grandes no ônibus?",
@@ -594,7 +599,7 @@ const TRANSLATIONS = {
     faq_q5: "Onde posso consultar informações oficiais de tarifas?",
     faq_a5: "No Guichê 4 da Río Uruguay na Rodoviária Central (Av. Córdoba e Misiones).",
     faq_q6: "Moradores de Puerto Iguazú têm tarifa diferenciada?",
-    faq_a6: "O transporte urbano prevê condições para moradores locais conforme normas vigentes na administração.",
+    faq_a6: "Sim. Para o serviço às Cataratas os moradores de Puerto Iguazú pagam $4.000 mediante apresentação de cópia do DNI. Além disso, no transporte urbano geral vigora a tarifa com cartão próprio da empresa ($2.200 frente a $2.800 em dinheiro).",
 
     // Contact & Footer
     contact_title: "Atendimento ao Passageiro",
@@ -624,17 +629,14 @@ const TRANSLATIONS = {
     lang_select_title: "Choisir la langue",
 
     // Global Data Indicators
-    info_not_available: "Information non disponible",
-    pending_confirmation: "En attente de confirmation officielle",
-    official_data_pending: "Données officielles : en attente de confirmation",
-    last_update_label: "Dernière mise à jour :",
-    last_update_prefix: "Dernière mise à jour des données :",
-    last_update_pending: "en attente de confirmation",
-    notice_pending_official: "Informations sur les tarifs et horaires en attente de confirmation officielle.",
-    fare_not_available: "Tarif : Information non disponible",
-    schedule_not_available: "Horaire : Information non disponible",
-    frequency_not_available: "Fréquence : Information non disponible",
-    modal_schedules_pending: "Horaires et fréquences en attente de confirmation officielle au guichet.",
+    header_last_update_prefix: "Dernière mise à jour des informations :",
+    header_last_update: "Dernière mise à jour des informations : 23/10/2026",
+    converter_title: "Convertisseur estimatif de tarifs",
+    converter_clarification: "Conversions indicatives calculées avec des taux de change externes. Les tarifs officiels de l'entreprise s'appliquent exclusivement en Pesos Argentins (ARS).",
+    converter_reference_values: "Valeurs de référence modifiables",
+    cabecera_schedule_title: "Départs du Terminus (Gare Routière)",
+    cabecera_schedule_note: "Les horaires correspondent aux départs des bus depuis le terminus (gare routière), et non aux heures de passage aux arrêts intermédiaires.",
+    cabecera_departures_regular: "Départs réguliers du terminus selon la demande d'exploitation.",
 
     // Hero
     hero_badge: "TRANSPORTS PUBLICS PUERTO IGUAZÚ • RÍO URUGUAY",
@@ -653,9 +655,9 @@ const TRANSLATIONS = {
 
     // Categories / Filters
     cat_all: "Toutes les Lignes",
-    cat_tourist: "Touristiques & Chutes",
-    cat_urban: "Lignes de Quartier",
-    cat_international: "International",
+    cat_tourist: "Touristiques",
+    cat_urban: "Urbaines",
+    cat_international: "Internationales",
 
     // Status / Notice
     live_next_bus_title: "État du Service",
@@ -671,8 +673,8 @@ const TRANSLATIONS = {
     line_direction_ida: "Aller (Vers la Destination)",
     line_direction_vuelta: "Retour (Vers Gare Routière / Centre)",
     line_stops_count: "arrêts principaux",
-    line_first_bus: "Premier départ :",
-    line_last_bus: "Dernier départ :",
+    line_first_bus: "Premier bus (départ terminus) :",
+    line_last_bus: "Dernier bus (départ terminus) :",
     line_show_on_map: "Tracer sur la Carte",
     line_download_pdf: "Enregistrer l'Information",
 
@@ -739,32 +741,38 @@ const TRANSLATIONS = {
 
     // Fares Section
     fares_title: "Tarifs & Moyens de Paiement",
-    fares_subtitle: "Informations tarifaires en attente de confirmation officielle.",
+    fares_subtitle: "Tarifs en vigueur des transports urbains, touristiques et internationaux.",
     fare_category_col: "Catégorie / Trajet",
     fare_price_ars_col: "Pesos (ARS)",
     fare_price_brl_col: "Reais (BRL)",
     fare_price_usd_col: "Dollars US (USD)",
     fare_validity_col: "Lignes Concernées",
 
-    fare_cataratas: "Ligne Chutes d'Iguazú (Parc National)",
+    fare_cataratas: "Service Chutes d'Iguazú (Parc National - Général)",
     fare_cataratas_desc: "Bus direct jusqu'à l'entrée du Parc National (RN 12)",
+    fare_cataratas_resident: "Service Chutes d'Iguazú (Résidents de Puerto Iguazú)",
+    fare_cataratas_resident_desc: "Tarif pour les résidents de Puerto Iguazú. Condition : présenter une photocopie de la pièce d'identité (DNI).",
     fare_airport: "Service Spécial Aéroport IGR",
-    fare_airport_desc: "De la Gare Routière/Centre vers l'Aéroport International",
+    fare_airport_desc: "De la Gare Routière/Centre vers l'Aéroport International Mayor Carlos Krause",
     fare_international: "Ligne Internationale Foz do Iguaçu (Brésil)",
     fare_international_desc: "Traversée du Pont Tancredo Neves jusqu'au Terminal TTU à Foz do Iguaçu",
     fare_international_py: "Ligne Internationale Ciudad del Este (Paraguay)",
     fare_international_py_desc: "Liaison vers le Paraguay via Foz do Iguaçu et le Pont de l'Amitié",
     fare_tourist_hito: "Ligne Touristique 3 Frontières / 600 Ha",
     fare_tourist_hito_desc: "Accès à la Borne des Trois Frontières, la Promenade et la Réserve Yriapú",
-    fare_urban_general: "Billet Urbain Local / Résident",
-    fare_urban_general_desc: "Tarif général des lignes de quartier",
+    fare_urban_general: "Bus Urbain Local (Espèces)",
+    fare_urban_general_desc: "Tarif général de quartier réglé en espèces",
+    fare_urban_card: "Bus Urbain avec Carte de l'Entreprise",
+    fare_urban_card_desc: "Paiement avec la carte électronique propre de Río Uruguay",
     fare_student_beeg: "Pass Étudiant Gratuit (BEEG)",
-    fare_student_beeg_desc: "Pour les étudiants inscrits pendant l'année scolaire",
+    fare_student_beeg_desc: "Avantage gratuit pour les étudiants",
 
     // Payment Methods
     pay_methods_title: "Moyens de Paiement",
-    pay_pending_title: "Moyens de paiement : En attente de confirmation officielle",
-    pay_pending_desc: "Les moyens de paiement acceptés et détails de cartes sont en attente de confirmation officielle.",
+    pay_cash_title: "Espèces",
+    pay_cash_desc: "Paiement en espèces en Pesos Argentins à bord des véhicules et aux guichets. Les réaux et dollars sont également acceptés au guichet pour les lignes touristiques et internationales.",
+    pay_sube_company_title: "Carte propre de l'entreprise",
+    pay_sube_company_desc: "Carte électronique propre de la compagnie Río Uruguay. Ne correspond pas à la carte SUBE nationale.",
 
     // Points of Sale
     points_title: "Guichets & Points d'Information",
@@ -785,7 +793,7 @@ const TRANSLATIONS = {
     faq_subtitle: "Réponses rapides aux questions fréquentes des voyageurs et résidents.",
     faq_search_placeholder: "Rechercher une question (ex : bagages, Chutes, Gare)...",
     faq_q1: "Comment payer son trajet en bus ?",
-    faq_a1: "Les modes de paiement acceptés sont en attente de confirmation officielle. Renseignez-vous directement au guichet du terminal.",
+    faq_a1: "Les billets peuvent être réglés en espèces à bord ou via la carte de la compagnie Río Uruguay. Les lignes touristiques et internationales acceptent également les réaux et dollars au guichet.",
     faq_q2: "D'où part le bus pour les Chutes d'Iguazú ?",
     faq_a2: "Le bus part du Quai 7 de la Gare Routière de Puerto Iguazú (Av. Córdoba et Misiones), avec des arrêts sur l'Av. Victoria Aguirre et la Route 12.",
     faq_q3: "Puis-je voyager avec des valises ou de grands sacs à dos ?",
@@ -795,7 +803,7 @@ const TRANSLATIONS = {
     faq_q5: "Où puis-je consulter les tarifs et horaires officiels ?",
     faq_a5: "Au Guichet 4 de Río Uruguay à la Gare Routière (Av. Córdoba & Misiones) et aux points de service habilités.",
     faq_q6: "Les résidents de Puerto Iguazú bénéficient-ils d'un tarif préférentiel ?",
-    faq_a6: "Le transport urbain prévoit des modalités pour les résidents locaux selon les conditions administratives en vigueur.",
+    faq_a6: "Oui. Pour la ligne des Chutes, les résidents de Puerto Iguazú paient $4 000 sur présentation d'une photocopie de la carte d'identité (DNI). De plus, sur le réseau urbain général s'applique le tarif avec carte de l'entreprise ($2 200 contre $2 800 en espèces).",
 
     // Contact & Footer
     contact_title: "Service Voyageurs & Assistance",
